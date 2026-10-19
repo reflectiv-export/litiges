@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light">
+<meta name="robots" content="noindex">
+<title>Reflectiv · Formulaire de réclamation</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🪟</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F4F6F8;--surface:#fff;--ink:#1D2939;--ink2:#344054;--muted:#667085;--line:#E4E7EC;--line2:#D0D5DD;
+  --pri:#0B6E85;--pri-h:#095A6D;--pri-soft:#E4F3F6;--amber:#B54708;--amber-soft:#FEF0C7;--red:#B42318;--red-soft:#FEE4E2;--ok:#067647;--ok-soft:#DCFAE6;
+  --shadow:0 1px 2px rgba(16,24,40,.05);--shadow-lg:0 16px 40px rgba(16,24,40,.14);
+  --f:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif;color-scheme:light;
+}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit}
+[hidden]{display:none!important}
+:focus-visible{outline:2px solid var(--pri);outline-offset:2px}
+.top{position:sticky;top:0;z-index:20;background:var(--surface);border-bottom:1px solid var(--line)}
+.top-in{max-width:860px;margin:0 auto;padding:10px 16px;display:flex;align-items:center;gap:12px}
+.brand{display:flex;align-items:center;gap:14px}
+.brand .logo{height:44px;width:auto;display:block}
+.brand small{font-weight:500;color:var(--muted);font-size:13px;padding-left:14px;border-left:1px solid var(--line)}
+@media (max-width:480px){.brand .logo{height:34px}.brand small{display:none}}
+.spacer{flex:1}
+.savest{font-size:12.5px;color:var(--muted);text-align:right}
+.savest.err{color:var(--amber)}
+.lang{border:1px solid var(--line2);border-radius:8px;padding:5px 8px;background:var(--surface);font-weight:600;font-size:13px}
+main{max-width:860px;margin:0 auto;padding:18px 16px 120px}
+.steps{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin-bottom:16px;scrollbar-width:none}
+.steps button{flex:none;border:1px solid var(--line2);background:var(--surface);border-radius:99px;padding:6px 12px 6px 6px;display:flex;gap:7px;align-items:center;cursor:pointer;font-weight:600;font-size:13px;color:var(--ink2)}
+.steps button i{font-style:normal;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:12px;background:var(--bg);color:var(--muted)}
+.steps button.ok i{background:var(--ok);color:#fff}
+.steps button.miss i{background:var(--amber-soft);color:var(--amber)}
+.steps button[aria-current="step"]{border-color:var(--pri);background:var(--pri-soft);color:var(--pri)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:22px;box-shadow:var(--shadow)}
+@media (max-width:560px){.card{padding:16px}}
+.card h1{font-size:21px;margin:0 0 6px}
+.lead{color:var(--muted);margin:0 0 18px}
+.intro{background:var(--pri-soft);border-radius:12px;padding:14px 16px;margin-bottom:18px;font-size:14px}
+.intro b{color:var(--pri)}
+.intro ul{margin:6px 0 0;padding-left:18px}
+.fields{display:grid;gap:16px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:560px){.row2{grid-template-columns:1fr}}
+.f>label,.f>.lbl{display:block;font-weight:600;font-size:14px;margin-bottom:5px}
+.f .req{color:var(--red);margin-left:2px}
+.f .help{font-size:13px;color:var(--muted);margin:-2px 0 6px}
+.inp{width:100%;border:1px solid var(--line2);background:var(--surface);border-radius:10px;padding:10px 12px;font-size:15px}
+.inp:focus{border-color:var(--pri);outline:3px solid var(--pri-soft);outline-offset:0}
+textarea.inp{min-height:110px;resize:vertical}
+.f.bad .inp,.f.bad .opts{border-color:var(--amber)}
+.f.bad .bad-msg{display:block}
+.bad-msg{display:none;color:var(--amber);font-size:12.5px;margin-top:4px;font-weight:500}
+.opts{display:flex;flex-wrap:wrap;gap:8px;border-radius:10px}
+.opt{display:flex;align-items:center;gap:8px;border:1px solid var(--line2);border-radius:10px;padding:9px 12px;cursor:pointer;background:var(--surface);font-weight:500;font-size:14px}
+.opt input{accent-color:var(--pri);width:17px;height:17px;margin:0}
+.opt:has(input:checked){border-color:var(--pri);background:var(--pri-soft);color:var(--pri)}
+.typecards{display:grid;gap:10px}
+.typecard{display:flex;gap:14px;align-items:flex-start;border:1.5px solid var(--line2);border-radius:14px;padding:16px;cursor:pointer;background:var(--surface)}
+.typecard input{margin-top:3px;accent-color:var(--pri);width:18px;height:18px}
+.typecard strong{display:block;font-size:16px}
+.typecard span{color:var(--muted);font-size:14px}
+.typecard .ic{font-size:26px;line-height:1}
+.typecard:has(input:checked){border-color:var(--pri);background:var(--pri-soft)}
+.sub{font-size:12.5px;font-weight:700;color:var(--pri);text-transform:uppercase;letter-spacing:.06em;margin:10px 0 -4px;padding-top:12px;border-top:1px solid var(--line)}
+.sub:first-child{border-top:0;padding-top:0;margin-top:0}
+.warn{background:var(--amber-soft);color:#7A2E0E;border-radius:10px;padding:11px 14px;font-size:13.5px}
+.warn b{font-weight:700}
+.tips{background:var(--bg);border-radius:12px;padding:12px 14px;font-size:13.5px;color:var(--ink2);margin-bottom:16px}
+.pcat{border:1px solid var(--line);border-radius:14px;padding:14px;display:grid;gap:10px}
+.pcat.bad{border-color:var(--amber);background:#FFFCF5}
+.pcat-h{display:flex;gap:10px;align-items:flex-start}
+.pcat-h strong{display:block;font-size:15px}
+.pcat-h span{color:var(--muted);font-size:13.5px}
+.pcount{margin-left:auto;flex:none;font-size:12px;font-weight:700;border-radius:99px;padding:2px 9px;background:var(--bg);color:var(--muted)}
+.pcount.ok{background:var(--ok-soft);color:var(--ok)}
+.pcount.miss{background:var(--amber-soft);color:var(--amber)}
+.thumbs{display:grid;grid-template-columns:repeat(auto-fill,minmax(86px,1fr));gap:8px}
+.th{position:relative;aspect-ratio:1;border-radius:10px;overflow:hidden;background:var(--bg);display:grid;place-items:center;font-size:12px;color:var(--muted);font-weight:700}
+.th img{width:100%;height:100%;object-fit:cover;display:block}
+.th .x{position:absolute;top:4px;right:4px;border:0;background:rgba(0,0,0,.6);color:#fff;border-radius:50%;width:24px;height:24px;cursor:pointer;line-height:1}
+.th .ld{position:absolute;inset:0;background:rgba(255,255,255,.7);display:grid;place-items:center}
+.th.err{outline:2px solid var(--red)}
+.addp{border:2px dashed var(--line2);border-radius:10px;aspect-ratio:1;display:grid;place-items:center;text-align:center;color:var(--pri);font-weight:600;font-size:12.5px;cursor:pointer;background:#FAFBFC;padding:6px}
+.addp:hover{border-color:var(--pri);background:var(--pri-soft)}
+.na{display:flex;gap:8px;align-items:center;font-size:13.5px;cursor:pointer}
+.na input{accent-color:var(--pri)}
+.legal{background:var(--bg);border-radius:12px;padding:14px 16px;font-size:13.5px;color:var(--ink2)}
+.legal h2{font-size:15px;margin:0 0 8px;color:var(--ink)}
+.legal ol{margin:0;padding-left:18px;display:grid;gap:6px}
+.consent{display:flex;gap:10px;align-items:flex-start;font-size:14px;cursor:pointer;padding:10px 12px;border:1px solid var(--line2);border-radius:10px}
+.consent input{margin-top:3px;accent-color:var(--pri);width:18px;height:18px;flex:none}
+.consent:has(input:checked){border-color:var(--pri);background:var(--pri-soft)}
+.missing{background:var(--amber-soft);border-radius:12px;padding:12px 14px;font-size:14px;color:#7A2E0E}
+.missing ul{margin:6px 0 0;padding-left:18px}
+.missing a{color:inherit;font-weight:600;cursor:pointer;text-decoration:underline}
+.review{display:grid;gap:12px}
+.review section{border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.review h3{font-size:14px;margin:0 0 6px;display:flex;justify-content:space-between;gap:8px}
+.review h3 button{border:0;background:none;color:var(--pri);font-weight:600;cursor:pointer;font-size:13px}
+.review dl{margin:0;display:grid;grid-template-columns:minmax(120px,40%) 1fr;gap:4px 12px;font-size:13.5px}
+.review dt{color:var(--muted)}
+.review dd{margin:0;word-break:break-word}
+.bar{position:fixed;left:0;right:0;bottom:0;background:var(--surface);border-top:1px solid var(--line);z-index:15;padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px))}
+.bar-in{max-width:860px;margin:0 auto;display:flex;gap:8px;align-items:center}
+.btn{border:1px solid var(--line2);background:var(--surface);padding:10px 16px;border-radius:10px;cursor:pointer;font-weight:600;font-size:14.5px;display:inline-flex;align-items:center;gap:6px;color:var(--ink2);white-space:nowrap}
+.btn:hover{background:#F9FAFB}
+.btn.primary{background:var(--pri);border-color:var(--pri);color:#fff}
+.btn.primary:hover{background:var(--pri-h)}
+.btn.ghost{border-color:transparent;background:none}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+@media (max-width:560px){.btn{padding:10px 12px;font-size:14px}.bar .hide-s{display:none}}
+.modal{position:fixed;inset:0;background:rgba(16,24,40,.45);z-index:50;display:grid;place-items:center;padding:16px}
+.mbox{background:var(--surface);border-radius:16px;padding:22px;max-width:480px;width:100%;box-shadow:var(--shadow-lg);display:grid;gap:12px}
+.mbox h2{margin:0;font-size:18px}
+.linkbox{display:flex;gap:8px}
+.linkbox input{flex:1;min-width:0}
+.center{text-align:center;padding:40px 22px}
+.center .big{font-size:44px}
+.spin{width:16px;height:16px;border:2px solid var(--line);border-top-color:var(--pri);border-radius:50%;animation:sp .8s linear infinite;display:inline-block}
+@keyframes sp{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.spin{animation:none}}
+.toast{position:fixed;bottom:84px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 16px;border-radius:10px;z-index:60;font-size:14px;max-width:calc(100vw - 32px)}
+</style>
+</head>
+<body>
+<header class="top"><div class="top-in">
+  <div class="brand"><img class="logo" alt="Réflectiv Window Films" width="609" height="236" src="data:image/png;base64,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"><small id="h-sub"></small></div>
+  <div class="spacer"></div>
+  <div class="savest" id="savest"></div>
+  <select class="lang" id="lang" aria-label="Langue / Idioma / Language">
+    <option value="fr">FR</option><option value="es">ES</option><option value="en">EN</option><option value="it">IT</option>
+  </select>
+</div></header>
+
+<main>
+  <div id="loading" class="card center"><span class="spin"></span></div>
+  <div id="app" hidden>
+    <nav class="steps" id="steps" aria-label="Étapes"></nav>
+    <div class="card" id="card"></div>
+  </div>
+  <div id="done" class="card center" hidden></div>
+</main>
+
+<div class="bar" id="bar" hidden><div class="bar-in">
+  <button class="btn ghost" id="b-prev"></button>
+  <div class="spacer"></div>
+  <button class="btn hide-s" id="b-later"></button>
+  <button class="btn primary" id="b-next"></button>
+</div></div>
+
+<div class="modal" id="m-saved" hidden><div class="mbox">
+  <h2 id="ms-t"></h2><p style="margin:0" id="ms-p"></p>
+  <div class="linkbox"><input class="inp" id="ms-link" readonly><button class="btn" id="ms-copy"></button></div>
+  <div style="text-align:right"><button class="btn primary" id="ms-close"></button></div>
+</div></div>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+/* ===================== Configuration ===================== */
+const API_URL=new URLSearchParams(location.search).get('api')||'https://script.google.com/macros/s/AKfycbyh3_bgg0W8zoeBoswJwBfOEfvJ10sTsuhPqJTB0X5ccbLpXv70cysEXLQ-AkJWo5z0dA/exec';
+const TOKEN=new URLSearchParams(location.search).get('t')||'';
+const MAX_PX=3000; /* photos envoyées en haute qualité pour garder les détails */
+
+/* ===================== Textes ===================== */
+const L4=(fr,es,en,it)=>({fr,es,en,it});
+const YESNO=[['oui',L4('Oui','Sí','Yes','Sì')],['non',L4('Non','No','No','No')]];
+const SYMPTOMES=[['taches',L4('Taches','Manchas','Stains','Macchie')],['bulles',L4('Bulles','Burbujas','Bubbles','Bolle')],['plis',L4('Plis ou froissures','Pliegues o arrugas','Creases or wrinkles','Pieghe o grinze')],['marques_bobine',L4('Marques de bobine','Marcas de bobina','Core marks','Segni della bobina')],['rayures',L4('Rayures','Arañazos','Scratches','Graffi')],['decollement',L4('Décollement / délamination','Desprendimiento / delaminación','Peeling / delamination','Distacco / delaminazione')],['decoloration',L4('Décoloration','Decoloración','Discoloration','Scolorimento')],['adhesif',L4('Défaut d’adhésif','Defecto del adhesivo','Adhesive defect','Difetto dell’adesivo')],['dechire',L4('Film déchiré ou coupé','Lámina rota o cortada','Torn or cut film','Pellicola strappata o tagliata')],['autre',L4('Autre','Otro','Other','Altro')]];
+const UI={
+ sub:L4('Formulaire de réclamation','Formulario de reclamación','Claim form','Modulo di reclamo'),
+ prev:L4('← Précédent','← Anterior','← Back','← Indietro'),next:L4('Suivant →','Siguiente →','Next →','Avanti →'),
+ later:L4('Enregistrer et finir plus tard','Guardar y terminar más tarde','Save and finish later','Salva e completa più tardi'),
+ send:L4('Envoyer le formulaire','Enviar el formulario','Send the form','Invia il modulo'),
+ sending:L4('Envoi…','Enviando…','Sending…','Invio…'),
+ saving:L4('Enregistrement…','Guardando…','Saving…','Salvataggio…'),savedAt:L4('Enregistré à','Guardado a las','Saved at','Salvato alle'),
+ offline:L4('Gardé sur cet appareil (connexion impossible)','Guardado en este dispositivo (sin conexión)','Kept on this device (no connection)','Salvato su questo dispositivo (nessuna connessione)'),
+ req:L4('Obligatoire','Obligatorio','Required','Obbligatorio'),opt:L4('facultatif','opcional','optional','facoltativo'),
+ badEmail:L4('Adresse email invalide','Email no válido','Invalid email','Email non valida'),
+ minText:L4('Décrivez en au moins 20 caractères','Describa con al menos 20 caracteres','Describe in at least 20 characters','Descrivere con almeno 20 caratteri'),
+ choose:L4('— Choisir —','— Elegir —','— Choose —','— Scegliere —'),
+ savedT:L4('Vos réponses sont enregistrées','Sus respuestas están guardadas','Your answers are saved','Le risposte sono salvate'),
+ savedP:L4('Vous pouvez fermer cette page et revenir plus tard avec le même lien (aussi depuis un autre appareil) :','Puede cerrar esta página y volver más tarde con el mismo enlace (también desde otro dispositivo):','You can close this page and come back later with the same link (also from another device):','Potete chiudere questa pagina e tornare più tardi con lo stesso link (anche da un altro dispositivo):'),
+ copy:L4('Copier','Copiar','Copy','Copia'),copied:L4('Copié','Copiado','Copied','Copiato'),close:L4('Fermer','Cerrar','Close','Chiudi'),
+ introT:L4('Merci de nous avoir contactés.','Gracias por contactarnos.','Thank you for contacting us.','Grazie per averci contattato.'),
+ introP:L4('Pour étudier votre réclamation, nous avons besoin de toutes les informations ci-dessous. Comptez environ 10 minutes. Préparez :','Para estudiar su reclamación necesitamos toda la información siguiente. Cuente unos 10 minutos. Tenga a mano:','To study your claim we need all the information below. It takes about 10 minutes. Please have ready:','Per esaminare il reclamo ci servono tutte le informazioni qui sotto. Circa 10 minuti. Tenete a portata di mano:'),
+ introL:[L4('le n° de facture ou de commande','el nº de factura o pedido','the invoice or order number','il n. di fattura o ordine'),L4('le n° de lot (sur l’étiquette du carton)','el nº de lote (en la etiqueta de la caja)','the lot number (on the box label)','il n. di lotto (sull’etichetta della scatola)'),L4('les photos demandées','las fotos solicitadas','the requested photos','le foto richieste')],
+ introS:L4('Vos réponses sont enregistrées automatiquement : vous pouvez terminer plus tard avec le même lien.','Sus respuestas se guardan automáticamente: puede terminar más tarde con el mismo enlace.','Your answers are saved automatically: you can finish later with the same link.','Le risposte vengono salvate automaticamente: potete completare più tardi con lo stesso link.'),
+ introW:L4('Aucune demande ne peut être traitée tant que ce formulaire n’est pas complet.','Ninguna solicitud puede ser procesada hasta que este formulario esté completo.','No request can be processed until this form is complete.','Nessuna richiesta può essere elaborata finché il modulo non è completo.'),
+ tips:L4('<b>Conseils photo :</b> photos nettes, à la lumière du jour, sans flash direct sur le film. Pour chaque défaut : une vue d’ensemble + un gros plan. Les photos sont envoyées en haute qualité, pour que nos techniciens puissent zoomer.','<b>Consejos para las fotos:</b> fotos nítidas, con luz natural, sin flash directo sobre la lámina. Para cada defecto: una vista general + un primer plano. Las fotos se envían en alta calidad para que nuestros técnicos puedan hacer zoom.','<b>Photo tips:</b> sharp photos, in daylight, no direct flash on the film. For each defect: an overall view + a close-up. Photos are sent in high quality so our technicians can zoom in.','<b>Consigli per le foto:</b> foto nitide, alla luce del giorno, senza flash diretto sulla pellicola. Per ogni difetto: una vista d’insieme + un primo piano. Le foto sono inviate in alta qualità, per permettere ai tecnici di ingrandire.'),
+ add:L4('+ Ajouter','+ Añadir','+ Add','+ Aggiungi'),
+ photoN:n=>L4(`${n} photo${n>1?'s':''}`,`${n} foto${n>1?'s':''}`,`${n} photo${n>1?'s':''}`,`${n} foto`),
+ photoReq:L4('Au moins 1 photo','Al menos 1 foto','At least 1 photo','Almeno 1 foto'),
+ upErr:L4('Envoi impossible, réessayez','No se pudo enviar, inténtelo de nuevo','Upload failed, try again','Invio non riuscito, riprovare'),
+ missT:L4('Il manque encore :','Todavía falta:','Still missing:','Manca ancora:'),
+ blocked:L4('Le formulaire ne peut être envoyé que lorsque tout est complété.','El formulario solo puede enviarse cuando todo esté completo.','The form can only be sent once everything is complete.','Il modulo può essere inviato solo quando tutto è completo.'),
+ reviewT:L4('Vérifiez vos réponses','Revise sus respuestas','Check your answers','Controllate le risposte'),
+ edit:L4('Modifier','Modificar','Edit','Modifica'),
+ doneT:L4('Merci, votre formulaire a bien été envoyé','Gracias, su formulario ha sido enviado','Thank you, your form has been sent','Grazie, il modulo è stato inviato'),
+ doneP:L4('Notre équipe va étudier votre dossier et reviendra vers vous. Référence de votre dossier :','Nuestro equipo estudiará su expediente y le contestará. Referencia de su expediente:','Our team will study your case and get back to you. Your case reference:','Il nostro team esaminerà la pratica e vi ricontatterà. Riferimento della pratica:'),
+ doneOn:L4('Envoyé le','Enviado el','Sent on','Inviato il'),
+ badT:L4('Lien invalide','Enlace no válido','Invalid link','Link non valido'),
+ badP:L4('Ce lien n’est pas valide. Vérifiez l’adresse reçue par email ou contactez-nous.','Este enlace no es válido. Compruebe la dirección recibida por email o contáctenos.','This link is not valid. Check the address you received by email or contact us.','Questo link non è valido. Verificate l’indirizzo ricevuto via email o contattateci.'),
+ netT:L4('Connexion impossible','Sin conexión','Cannot connect','Connessione impossibile'),
+ netP:L4('Vérifiez votre connexion internet puis rechargez la page.','Compruebe su conexión a internet y recargue la página.','Check your internet connection and reload the page.','Verificate la connessione internet e ricaricate la pagina.'),
+ legalT:L4('Conditions de traitement de votre réclamation','Condiciones de tramitación de su reclamación','Conditions for processing your claim','Condizioni di gestione del reclamo'),
+ legal:[
+  L4('Aucune demande ne peut être traitée tant que ce formulaire n’est pas entièrement complété et envoyé avec les photos demandées. Les demandes incomplètes sont classées sans suite.','Ninguna solicitud puede ser tramitada hasta que este formulario esté completamente rellenado y enviado con las fotos solicitadas. Las solicitudes incompletas se archivan sin más trámite.','No request can be processed until this form is fully completed and sent with the requested photos. Incomplete requests are closed without further action.','Nessuna richiesta può essere elaborata finché il modulo non è interamente compilato e inviato con le foto richieste. Le richieste incomplete vengono archiviate senza seguito.'),
+  L4('L’ouverture d’un dossier ne vaut pas acceptation de la prise en charge. La garantie Reflectiv couvre exclusivement les défauts de fabrication du matériau (délamination, démétallisation, défauts de l’adhésif d’origine industrielle), conformément à la Politique officielle de garantie et de gestion des réclamations.','La apertura de un expediente no implica la aceptación de la cobertura. La garantía Reflectiv cubre exclusivamente los defectos de fabricación del material (delaminación, desmetalización, defectos del adhesivo de origen industrial), conforme a la Política oficial de garantía y gestión de reclamaciones.','Opening a case does not mean the claim is accepted. The Reflectiv warranty exclusively covers manufacturing defects of the material (delamination, demetallisation, adhesive defects of industrial origin), in accordance with the Official Warranty and Claims Management Policy.','L’apertura di una pratica non comporta l’accettazione della copertura. La garanzia Reflectiv copre esclusivamente i difetti di fabbricazione del materiale (delaminazione, demetallizzazione, difetti dell’adesivo di origine industriale), secondo la Politica ufficiale di garanzia e gestione dei reclami.'),
+  L4('Sont notamment exclus : une préparation insuffisante du vitrage, l’absence de scellement périphérique en pose extérieure, un entretien inadapté (produits ammoniaqués, solvants, outils abrasifs, premier lavage avant 30 jours), le stress thermique dû à un ombrage irrégulier, et la pose extérieure sur surface horizontale ou inclinée à plus de 15° sans dérogation écrite du Département Technique.','Quedan excluidos en particular: una preparación insuficiente del vidrio, la ausencia de sellado perimetral en instalación exterior, un mantenimiento inadecuado (productos con amoníaco, disolventes, herramientas abrasivas, primer lavado antes de 30 días), el estrés térmico debido a sombras irregulares, y la instalación exterior en superficies horizontales o inclinadas más de 15° sin autorización escrita del Departamento Técnico.','Excluded in particular: insufficient glass preparation, no perimeter sealing on exterior installations, inadequate maintenance (ammonia-based products, solvents, abrasive tools, first wash before 30 days), thermal stress due to irregular shading, and exterior installation on horizontal surfaces or surfaces inclined more than 15° without written approval from the Technical Department.','Sono esclusi in particolare: una preparazione insufficiente del vetro, l’assenza di sigillatura perimetrale nelle applicazioni esterne, una manutenzione inadeguata (prodotti a base di ammoniaca, solventi, utensili abrasivi, primo lavaggio prima di 30 giorni), lo stress termico dovuto a ombreggiamento irregolare e l’applicazione esterna su superfici orizzontali o inclinate oltre 15° senza deroga scritta del Dipartimento Tecnico.'),
+  L4('Les dommages de transport doivent faire l’objet de réserves précises sur le bon de livraison à la réception, confirmées par écrit au transporteur dans les délais légaux (3 jours en transport national français, art. L.133-3 du Code de commerce ; 7 jours pour les dommages non apparents en transport international, convention CMR art. 30).','Los daños de transporte deben indicarse con reservas precisas en el albarán de entrega en el momento de la recepción, y confirmarse por escrito al transportista en los plazos legales (3 días en transporte nacional francés, art. L.133-3 del Code de commerce; 7 días para daños no aparentes en transporte internacional, convenio CMR art. 30).','Transport damage must be recorded as precise reservations on the delivery note upon receipt, and confirmed in writing to the carrier within the legal deadlines (3 days for French domestic transport, art. L.133-3 Code de commerce; 7 days for non-apparent damage in international transport, CMR Convention art. 30).','I danni da trasporto devono essere indicati con riserve precise sulla bolla di consegna al momento del ricevimento e confermati per iscritto al vettore entro i termini di legge (3 giorni per il trasporto nazionale francese, art. L.133-3 Code de commerce; 7 giorni per i danni non apparenti nel trasporto internazionale, convenzione CMR art. 30).'),
+  L4('Reflectiv peut demander des informations complémentaires, des échantillons ou une expertise avant toute décision. Toute information inexacte peut entraîner le refus de la demande.','Reflectiv puede solicitar información adicional, muestras o un peritaje antes de cualquier decisión. Cualquier información inexacta puede conllevar el rechazo de la solicitud.','Reflectiv may request additional information, samples or an expert assessment before any decision. Any inaccurate information may lead to the request being rejected.','Reflectiv può richiedere informazioni aggiuntive, campioni o una perizia prima di qualsiasi decisione. Qualsiasi informazione inesatta può comportare il rifiuto della richiesta.')],
+ c1:L4('Je certifie que les informations et les photos fournies sont exactes et concernent le produit en question.','Certifico que la información y las fotos proporcionadas son exactas y corresponden al producto en cuestión.','I certify that the information and photos provided are accurate and relate to the product concerned.','Certifico che le informazioni e le foto fornite sono esatte e riguardano il prodotto in questione.'),
+ c2:L4('J’ai lu et j’accepte les conditions ci-dessus. Je comprends que l’envoi de ce formulaire ne garantit pas la prise en charge.','He leído y acepto las condiciones anteriores. Entiendo que el envío de este formulario no garantiza la cobertura.','I have read and accept the conditions above. I understand that sending this form does not guarantee the claim will be covered.','Ho letto e accetto le condizioni sopra indicate. Comprendo che l’invio del modulo non garantisce la copertura.'),
+ consentMiss:L4('Acceptation des conditions','Aceptación de las condiciones','Acceptance of the conditions','Accettazione delle condizioni')
+};
+let LANG='fr';
+const tr=o=>o?(typeof o==='string'?o:(o[LANG]||o.en||o.fr)):'';
+
+/* ===================== Questions ===================== */
+/* t : text | email | tel | number | date | select | radio | checks | textarea | sub (intertitre) | warn (avertissement)
+   show(r) : la question n'apparaît que si la fonction renvoie vrai. Toutes les questions sont obligatoires sauf opt:true. */
+const isT=r=>r.type==='transport', isD=r=>r.type==='defaut', isP=r=>r.type==='pose';
+const STEPS=[
+ {id:'contact',title:L4('Vos coordonnées','Sus datos','Your details','I vostri dati'),intro:true,fields:[
+  {id:'societe',t:'text',l:L4('Société','Empresa','Company','Azienda'),ac:'organization'},
+  {row:[{id:'contact',t:'text',l:L4('Nom et prénom','Nombre y apellidos','Full name','Nome e cognome'),ac:'name'},{id:'role',t:'select',l:L4('Vous êtes','Usted es','You are','Lei è'),o:[['distributeur',L4('Distributeur','Distribuidor','Distributor','Distributore')],['installateur',L4('Installateur','Instalador','Installer','Installatore')],['final',L4('Client final','Cliente final','End customer','Cliente finale')]]}]},
+  {row:[{id:'email',t:'email',l:L4('Email','Email','Email','Email'),ac:'email'},{id:'tel',t:'tel',l:L4('Téléphone','Teléfono','Phone','Telefono'),ac:'tel'}]},
+  {id:'pays',t:'country',l:L4('Pays','País','Country','Paese')}]},
+ {id:'produit',title:L4('Le produit','El producto','The product','Il prodotto'),fields:[
+  {row:[{id:'facture',t:'text',l:L4('N° de facture ou de commande Reflectiv','Nº de factura o pedido Reflectiv','Reflectiv invoice or order no.','N. fattura o ordine Reflectiv')},{id:'code',t:'text',list:true,l:L4('Référence du film','Referencia de la lámina','Film reference','Riferimento della pellicola'),ph:'SOL 102'}]},
+  {id:'lot',t:'text',l:L4('N° de lot (Lot / Roll Number)','Nº de lote (Lot / Roll Number)','Lot number (Lot / Roll Number)','N. di lotto (Lot / Roll Number)'),h:L4('Imprimé sur l’étiquette du carton ou du mandrin. Sans ce numéro, la réclamation ne peut pas être traitée.','Impreso en la etiqueta de la caja o del tubo. Sin este número, la reclamación no puede tramitarse.','Printed on the box or core label. Without this number, the claim cannot be processed.','Stampato sull’etichetta della scatola o dell’anima. Senza questo numero il reclamo non può essere gestito.')},
+  {row:[{id:'rouleaux',t:'number',l:L4('Nombre de rouleaux concernés','Número de rollos afectados','Number of rolls affected','Numero di rotoli interessati')},{id:'format',t:'select',l:L4('Longueur du rouleau','Longitud del rollo','Roll length','Lunghezza del rotolo'),o:[['10',L4('10 m','10 m','10 m','10 m')],['30',L4('30 m','30 m','30 m','30 m')],['50',L4('50 m','50 m','50 m','50 m')],['autre',L4('Autre','Otra','Other','Altra')]]}]},
+  {id:'dateReception',t:'date',l:L4('Date de réception de la marchandise','Fecha de recepción de la mercancía','Date the goods were received','Data di ricevimento della merce')}]},
+ {id:'type',title:L4('Type de problème','Tipo de problema','Type of problem','Tipo di problema'),fields:[
+  {id:'type',t:'types',l:L4('Quel est votre cas ?','¿Cuál es su caso?','Which is your case?','Qual è il vostro caso?'),o:[
+   ['transport','🚚',L4('Dommage de transport','Daño de transporte','Transport damage','Danno da trasporto'),L4('Le colis ou le rouleau est arrivé abîmé.','El paquete o el rollo llegó dañado.','The parcel or roll arrived damaged.','Il collo o il rotolo è arrivato danneggiato.')],
+   ['defaut','🎞️',L4('Défaut constaté avant la pose','Defecto visto antes de instalar','Defect found before installation','Difetto rilevato prima della posa'),L4('Le défaut est visible sur le rouleau, avant d’appliquer le film.','El defecto se ve en el rollo, antes de aplicar la lámina.','The defect is visible on the roll, before applying the film.','Il difetto è visibile sul rotolo, prima di applicare la pellicola.')],
+   ['pose','🪟',L4('Problème après la pose','Problema después de la instalación','Problem after installation','Problema dopo la posa'),L4('Le défaut est apparu une fois le film posé sur le vitrage.','El defecto apareció una vez instalada la lámina en el vidrio.','The defect appeared once the film was installed on the glass.','Il difetto è comparso dopo la posa della pellicola sul vetro.')]]}]},
+ {id:'details',title:L4('Détails du problème','Detalles del problema','Problem details','Dettagli del problema'),fields:[
+  {t:'warn',show:r=>!r.type,html:L4('Choisissez d’abord le type de problème (étape précédente).','Elija primero el tipo de problema (paso anterior).','First choose the type of problem (previous step).','Scegliete prima il tipo di problema (passo precedente).')},
+  /* --- transport --- */
+  {row:[{id:'dateLivraison',t:'date',show:isT,l:L4('Date de livraison','Fecha de entrega','Delivery date','Data di consegna')},{id:'transporteur',t:'text',show:isT,l:L4('Nom du transporteur','Nombre del transportista','Carrier name','Nome del vettore')}]},
+  {id:'reserves',t:'radio',show:isT,o:YESNO,l:L4('Avez-vous noté des réserves précises sur le bon de livraison ?','¿Indicó reservas precisas en el albarán de entrega?','Did you write precise reservations on the delivery note?','Avete indicato riserve precise sulla bolla di consegna?')},
+  {t:'warn',show:r=>isT(r)&&r.reserves==='non',html:L4('<b>Attention :</b> sans réserves sur le bon de livraison, le recours contre le transporteur est très limité.','<b>Atención:</b> sin reservas en el albarán, el recurso contra el transportista es muy limitado.','<b>Warning:</b> without reservations on the delivery note, recourse against the carrier is very limited.','<b>Attenzione:</b> senza riserve sulla bolla, il ricorso contro il vettore è molto limitato.')},
+  {id:'etatColis',t:'radio',show:isT,l:L4('État du carton à la réception','Estado de la caja al recibirla','Condition of the box on receipt','Stato della scatola al ricevimento'),o:[['intact',L4('Intact','Intacta','Intact','Integra')],['abime',L4('Abîmé ou percé','Dañada o perforada','Damaged or pierced','Danneggiata o forata')],['ecrase',L4('Écrasé','Aplastada','Crushed','Schiacciata')],['mouille',L4('Mouillé','Mojada','Wet','Bagnata')],['ouvert',L4('Ouvert','Abierta','Opened','Aperta')]]},
+  {id:'dommages',t:'checks',show:isT,l:L4('Qu’est-ce qui est endommagé ?','¿Qué está dañado?','What is damaged?','Cosa è danneggiato?'),o:[['carton',L4('Carton','Caja','Box','Scatola')],['mandrin',L4('Mandrin (tube central)','Tubo central','Core (central tube)','Anima (tubo centrale)')],['bords',L4('Bords du film','Bordes de la lámina','Film edges','Bordi della pellicola')],['interieur',L4('Film à l’intérieur du rouleau','Lámina en el interior del rollo','Film inside the roll','Pellicola all’interno del rotolo')]]},
+  /* --- défaut avant pose --- */
+  {id:'symptomes',t:'checks',show:r=>isD(r)||isP(r),o:SYMPTOMES,l:L4('Que constatez-vous ?','¿Qué observa?','What do you see?','Cosa osservate?')},
+  {id:'position',t:'radio',show:isD,l:L4('Où se trouve le défaut sur le rouleau ?','¿Dónde está el defecto en el rollo?','Where is the defect on the roll?','Dove si trova il difetto sul rotolo?'),o:[['debut',L4('Au début','Al principio','At the start','All’inizio')],['milieu',L4('Au milieu','En medio','In the middle','A metà')],['fin',L4('À la fin','Al final','At the end','Alla fine')],['tout',L4('Sur toute la longueur','En toda la longitud','Along the whole length','Su tutta la lunghezza')],['nsp',L4('Je ne sais pas','No lo sé','I don’t know','Non so')]]},
+  {row:[{id:'metres',t:'number',show:isD,l:L4('Sur combien de mètres environ ?','¿En cuántos metros aproximadamente?','Over roughly how many metres?','Su circa quanti metri?')},{id:'stockage',t:'select',show:isD,l:L4('Stockage du rouleau','Almacenamiento del rollo','Roll storage','Stoccaggio del rotolo'),o:[['couche',L4('Dans son carton, couché','En su caja, tumbado','In its box, lying flat','Nella scatola, coricato')],['debout',L4('Dans son carton, debout','En su caja, de pie','In its box, standing','Nella scatola, in piedi')],['hors',L4('Hors du carton','Fuera de la caja','Out of the box','Fuori dalla scatola')]]}]},
+  /* --- après pose (Annexe 1) --- */
+  {t:'sub',show:isP,l:L4('A. Installation','A. Instalación','A. Installation','A. Installazione')},
+  {row:[{id:'dateInstallation',t:'date',show:isP,l:L4('Date exacte de la pose','Fecha exacta de instalación','Exact installation date','Data esatta della posa')},{id:'installateur',t:'text',show:isP,l:L4('Entreprise qui a posé le film','Empresa que instaló la lámina','Company that installed the film','Azienda che ha posato la pellicola')}]},
+  {id:'lieu',t:'radio',show:isP,l:L4('Pose','Instalación','Installation','Posa'),o:[['interieur',L4('Intérieure','Interior','Interior','Interna')],['exterieur',L4('Extérieure','Exterior','Exterior','Esterna')]]},
+  {id:'inclinaison',t:'radio',show:isP,l:L4('Inclinaison du vitrage','Inclinación del vidrio','Glass inclination','Inclinazione del vetro'),o:[['verticale',L4('Verticale (0–15°)','Vertical (0–15°)','Vertical (0–15°)','Verticale (0–15°)')],['inclinee',L4('Inclinée ou toit (plus de 15°)','Inclinado o techo (más de 15°)','Inclined or roof (more than 15°)','Inclinata o tetto (oltre 15°)')]]},
+  {t:'warn',show:r=>isP(r)&&r.lieu==='exterieur'&&r.inclinaison==='inclinee',html:L4('<b>Attention :</b> selon la Politique de garantie, la pose extérieure sur surface horizontale ou inclinée (plus de 15°) entraîne l’annulation de la garantie standard, sauf dérogation écrite du Département Technique.','<b>Atención:</b> según la Política de garantía, la instalación exterior en superficies horizontales o inclinadas (más de 15°) anula la garantía estándar, salvo autorización escrita del Departamento Técnico.','<b>Warning:</b> under the Warranty Policy, exterior installation on horizontal or inclined surfaces (more than 15°) voids the standard warranty, unless approved in writing by the Technical Department.','<b>Attenzione:</b> secondo la Politica di garanzia, la posa esterna su superfici orizzontali o inclinate (oltre 15°) annulla la garanzia standard, salvo deroga scritta del Dipartimento Tecnico.')},
+  {row:[{id:'orientation',t:'select',show:isP,l:L4('Orientation de la façade','Orientación de la fachada','Facade orientation','Orientamento della facciata'),o:[['N',L4('Nord','Norte','North','Nord')],['NE',L4('Nord-est','Noreste','North-east','Nord-est')],['E',L4('Est','Este','East','Est')],['SE',L4('Sud-est','Sureste','South-east','Sud-est')],['S',L4('Sud','Sur','South','Sud')],['SO',L4('Sud-ouest','Suroeste','South-west','Sud-ovest')],['O',L4('Ouest','Oeste','West','Ovest')],['NO',L4('Nord-ouest','Noroeste','North-west','Nord-ovest')]]},
+        {id:'vitrage',t:'select',show:isP,l:L4('Type de vitrage','Tipo de vidrio','Glass type','Tipo di vetro'),o:[['simple',L4('Simple vitrage','Vidrio simple','Single glazing','Vetro singolo')],['double',L4('Double vitrage','Doble acristalamiento','Double glazing','Vetrocamera')],['feuillete',L4('Verre feuilleté','Vidrio laminado','Laminated glass','Vetro stratificato')],['trempe',L4('Verre trempé','Vidrio templado','Tempered glass','Vetro temperato')],['couche',L4('Verre à couche (basse émissivité, contrôle solaire)','Vidrio con capa (bajo emisivo, control solar)','Coated glass (low-e, solar control)','Vetro con coating (basso emissivo, controllo solare)')],['teinte',L4('Verre teinté','Vidrio tintado','Tinted glass','Vetro colorato')],['nsp',L4('Je ne sais pas','No lo sé','I don’t know','Non so')]]}]},
+  {id:'ombrage',t:'radio',show:isP,o:YESNO,l:L4('Le vitrage reçoit-il une ombre partielle (arbres, bâtiment, store, auvent) ?','¿El vidrio recibe sombra parcial (árboles, edificio, toldo, alero)?','Does the glass get partial shade (trees, building, blind, awning)?','Il vetro riceve un’ombra parziale (alberi, edificio, tenda, pensilina)?')},
+  {t:'sub',show:isP,l:L4('B. Préparation du vitrage','B. Preparación del vidrio','B. Glass preparation','B. Preparazione del vetro')},
+  {row:[{id:'nettoyage',t:'text',show:isP,l:L4('Produit utilisé pour le nettoyage initial','Producto usado para la limpieza inicial','Product used for initial cleaning','Prodotto usato per la pulizia iniziale'),ph:L4('Marque / type de dégraissant','Marca / tipo de desengrasante','Brand / type of degreaser','Marca / tipo di sgrassante')},
+        {id:'outils',t:'text',show:isP,l:L4('Outils de décontamination','Herramientas de descontaminación','Decontamination tools','Utensili di decontaminazione'),ph:L4('Ex. grattoir métallique, tampon abrasif léger','Ej. rascador metálico, estropajo suave','E.g. metal scraper, light abrasive pad','Es. raschietto metallico, tampone abrasivo leggero')}]},
+  {t:'sub',show:isP,l:L4('C. Application et finition','C. Aplicación y acabado','C. Application and finishing','C. Applicazione e finitura')},
+  {row:[{id:'liquide',t:'text',show:isP,l:L4('Liquide de pose utilisé','Líquido de montaje utilizado','Mounting solution used','Liquido di posa utilizzato'),ph:L4('Solution / shampooing','Solución / champú','Solution / shampoo','Soluzione / shampoo')},
+        {id:'ecart',t:'number',show:isP,l:L4('Espace laissé au bord (mm)','Espacio dejado en el borde (mm)','Gap left at the edge (mm)','Spazio lasciato sul bordo (mm)'),ph:L4('Ex. 2','Ej. 2','E.g. 2','Es. 2')}]},
+  {id:'scellement',t:'radio',show:isP,o:YESNO,l:L4('Scellement périphérique au silicone effectué ?','¿Se realizó sellado perimetral con silicona?','Perimeter silicone sealing done?','Sigillatura perimetrale con silicone eseguita?')},
+  {id:'silicone',t:'text',show:r=>isP(r)&&r.scellement==='oui',l:L4('Type de silicone et délai avant scellement','Tipo de silicona y tiempo antes del sellado','Silicone type and waiting time before sealing','Tipo di silicone e attesa prima della sigillatura'),ph:L4('Ex. silicone neutre, appliqué après 30 jours','Ej. silicona neutra, aplicada a los 30 días','E.g. neutral silicone, applied after 30 days','Es. silicone neutro, applicato dopo 30 giorni')},
+  {t:'warn',show:r=>isP(r)&&r.lieu==='exterieur'&&r.scellement==='non',html:L4('<b>Attention :</b> pour toute pose extérieure, le scellement périphérique au silicone neutre est obligatoire selon la Politique de garantie.','<b>Atención:</b> en toda instalación exterior, el sellado perimetral con silicona neutra es obligatorio según la Política de garantía.','<b>Warning:</b> for any exterior installation, perimeter sealing with neutral silicone is mandatory under the Warranty Policy.','<b>Attenzione:</b> per ogni posa esterna, la sigillatura perimetrale con silicone neutro è obbligatoria secondo la Politica di garanzia.')},
+  {t:'sub',show:isP,l:L4('D. Entretien après la pose','D. Mantenimiento después de la instalación','D. Maintenance after installation','D. Manutenzione dopo la posa')},
+  {row:[{id:'premierLavage',t:'text',show:isP,l:L4('Délai avant le premier lavage','Tiempo antes del primer lavado','Time before the first wash','Tempo prima del primo lavaggio'),ph:L4('Jours / semaines','Días / semanas','Days / weeks','Giorni / settimane')},
+        {id:'frequence',t:'select',show:isP,l:L4('Fréquence de nettoyage','Frecuencia de limpieza','Cleaning frequency','Frequenza di pulizia'),o:[['mensuelle',L4('Mensuelle','Mensual','Monthly','Mensile')],['trimestrielle',L4('Trimestrielle','Trimestral','Quarterly','Trimestrale')],['semestrielle',L4('Semestrielle','Semestral','Every 6 months','Semestrale')],['annuelle',L4('Annuelle','Anual','Yearly','Annuale')],['jamais',L4('Jamais','Nunca','Never','Mai')]]}]},
+  {id:'produitsEntretien',t:'text',show:isP,l:L4('Produits utilisés pour l’entretien','Productos usados para el mantenimiento','Products used for maintenance','Prodotti usati per la manutenzione')},
+  {t:'sub',show:isP,l:L4('E. Le défaut','E. El defecto','E. The defect','E. Il difetto')},
+  {row:[{id:'dateApparition',t:'date',show:isP,l:L4('Date d’apparition du défaut','Fecha de aparición del defecto','Date the defect appeared','Data di comparsa del difetto')},
+        {id:'vitragesTouches',t:'text',show:isP,l:L4('Vitrages touchés / total posés','Vidrios afectados / total instalados','Panes affected / total installed','Vetri interessati / totale posati'),ph:'3 / 12'}]},
+  /* --- commun --- */
+  {id:'description',t:'textarea',show:r=>!!r.type,min:20,l:L4('Décrivez le problème avec vos mots','Describa el problema con sus palabras','Describe the problem in your own words','Descrivete il problema con parole vostre')}]},
+ {id:'photos',title:L4('Photos','Fotos','Photos','Foto'),photos:true},
+ {id:'envoi',title:L4('Vérification et envoi','Revisión y envío','Check and send','Verifica e invio'),review:true}
+];
+const PHOTOS=[
+ {id:'etiquette',l:L4('Étiquette du carton ou du rouleau','Etiqueta de la caja o del rollo','Box or roll label','Etichetta della scatola o del rotolo'),h:L4('Le n° de lot doit être lisible.','El nº de lote debe ser legible.','The lot number must be readable.','Il n. di lotto deve essere leggibile.')},
+ {id:'colis',show:isT,l:L4('Emballage extérieur','Embalaje exterior','Outer packaging','Imballo esterno'),h:L4('Toutes les faces abîmées du carton, avant ouverture si possible.','Todas las caras dañadas de la caja, antes de abrirla si es posible.','All damaged sides of the box, before opening if possible.','Tutti i lati danneggiati della scatola, prima dell’apertura se possibile.')},
+ {id:'bonLivraison',show:isT,pdf:true,l:L4('Bon de livraison avec les réserves','Albarán de entrega con las reservas','Delivery note with reservations','Bolla di consegna con le riserve'),h:L4('Photo ou PDF du document signé.','Foto o PDF del documento firmado.','Photo or PDF of the signed document.','Foto o PDF del documento firmato.')},
+ {id:'dommage',show:isT,l:L4('Dommage sur le rouleau','Daño en el rollo','Damage on the roll','Danno sul rotolo'),h:L4('Une vue d’ensemble et un gros plan.','Una vista general y un primer plano.','An overall view and a close-up.','Una vista d’insieme e un primo piano.')},
+ {id:'defautEnsemble',show:isD,l:L4('Le défaut, vue d’ensemble','El defecto, vista general','The defect, overall view','Il difetto, vista d’insieme'),h:L4('Film déroulé et tendu devant une source de lumière.','Lámina desenrollada y tensada frente a una fuente de luz.','Film unrolled and held taut in front of a light source.','Pellicola srotolata e tesa davanti a una fonte di luce.')},
+ {id:'defautMacro',show:isD,l:L4('Gros plan du défaut','Primer plano del defecto','Close-up of the defect','Primo piano del difetto'),h:L4('Avec une règle ou une pièce de monnaie pour l’échelle.','Con una regla o una moneda como escala.','With a ruler or a coin for scale.','Con un righello o una moneta come scala.')},
+ {id:'pointZero',show:isP,na:true,l:L4('Photo « Point Zéro »','Foto «Punto Cero»','“Point Zero” photo','Foto «Punto Zero»'),h:L4('Prise le jour de la pose, à la fin des travaux.','Tomada el día de la instalación, al terminar los trabajos.','Taken on the installation day, at the end of the work.','Scattata il giorno della posa, a fine lavori.'),
+  naL:L4('Je n’ai pas de photo Point Zéro','No tengo foto Punto Cero','I have no Point Zero photo','Non ho la foto Punto Zero'),naW:L4('L’absence de photo Point Zéro peut limiter la prise en charge (Politique de garantie, §1).','La falta de foto Punto Cero puede limitar la cobertura (Política de garantía, §1).','Not having a Point Zero photo may limit coverage (Warranty Policy, §1).','L’assenza della foto Punto Zero può limitare la copertura (Politica di garanzia, §1).')},
+ {id:'bord',show:isP,l:L4('Détail du bord','Detalle del borde','Edge detail','Dettaglio del bordo'),h:L4('État du silicone et de l’espace au bord du vitrage.','Estado de la silicona y del espacio en el borde del vidrio.','Condition of the silicone and the gap at the glass edge.','Stato del silicone e dello spazio sul bordo del vetro.')},
+ {id:'grandAngle',show:isP,l:L4('Photo actuelle grand angle','Foto actual gran angular','Current wide-angle photo','Foto attuale grandangolo'),h:L4('Le vitrage entier et son environnement (végétation, ombres).','El vidrio entero y su entorno (vegetación, sombras).','The whole pane and its surroundings (vegetation, shadows).','Il vetro intero e l’ambiente circostante (vegetazione, ombre).')},
+ {id:'macro',show:isP,l:L4('Gros plan du défaut','Primer plano del defecto','Close-up of the defect','Primo piano del difetto'),h:L4('Avec une règle ou une pièce pour l’échelle.','Con una regla o una moneda como escala.','With a ruler or a coin for scale.','Con un righello o una moneta come scala.')},
+ {id:'autre',opt:true,pdf:true,l:L4('Autres documents','Otros documentos','Other documents','Altri documenti'),h:L4('Facture, autres photos…','Factura, otras fotos…','Invoice, other photos…','Fattura, altre foto…')}
+];
+
+/* ===================== Pays ===================== */
+const PAYS_PRIO=['FR','ES','PT','IT','DE','BE','NL','LU','CH','AT','GB','IE'];
+const PAYS=('AD AE AF AG AI AL AM AO AR AS AT AU AW AX AZ BA BB BD BE BF BG BH BI BJ BL BM BN BO BQ BR BS BT BW BY BZ CA CC CD CF CG CH CI CK CL CM CN CO CR CU CV CW CX CY CZ DE DJ DK DM DO DZ EC EE EG EH ER ES ET FI FJ FK FM FO FR GA GB GD GE GF GG GH GI GL GM GN GP GQ GR GT GU GW GY HK HN HR HT HU ID IE IL IM IN IQ IR IS IT JE JM JO JP KE KG KH KI KM KN KP KR KW KY KZ LA LB LC LI LK LR LS LT LU LV LY MA MC MD ME MF MG MH MK ML MM MN MO MP MQ MR MS MT MU MV MW MX MY MZ NA NC NE NF NG NI NL NO NP NR NU NZ OM PA PE PF PG PH PK PL PM PR PS PT PW PY QA RE RO RS RU RW SA SB SC SD SE SG SH SI SJ SK SL SM SN SO SR SS ST SV SX SY SZ TC TD TG TH TJ TK TL TM TN TO TR TT TV TW TZ UA UG US UY UZ VA VC VE VG VI VN VU WF WS XK YE YT ZA ZM ZW').split(' ');
+function paysNom(code,lang){try{return new Intl.DisplayNames([lang||LANG],{type:'region'}).of(code)||code}catch(_){return code}}
+/* pays proposé d'après le domaine de l'email (.es → ES) ; le client peut le changer */
+function paysDepuisEmail(email){const tld=(String(email||'').split('.').pop()||'').toUpperCase();const map={UK:'GB'};const c=map[tld]||tld;return PAYS.includes(c)?c:''}
+
+/* ===================== État ===================== */
+let R={}, FILES=[], CUR=0, CATALOG=[], CASE_ID='', saveTimer=null, lastSaved=null;
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function lsGet(k){try{return JSON.parse(localStorage.getItem(k))}catch(_){return null}}
+function lsSet(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(_){}}
+const LKEY='rf_form_'+TOKEN;
+function toast(m){const e=$('#toast');e.textContent=m;e.hidden=false;clearTimeout(e._h);e._h=setTimeout(()=>e.hidden=true,2600)}
+async function api(action,data={}){
+  let r;try{r=await fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action,t:TOKEN,...data})})}catch(e){const x=new Error('net');x.net=true;throw x}
+  const j=await r.json();if(!j.ok)throw new Error(j.error||'Erreur');return j.data;
+}
+const flat=fields=>fields.flatMap(f=>f.row?f.row:[f]);
+const visible=f=>!f.show||f.show(R);
+function missingOf(step){
+  const out=[];
+  if(step.fields)flat(step.fields).filter(f=>f.id&&visible(f)&&!f.opt).forEach(f=>{
+    const v=R[f.id];
+    if(f.t==='checks'?!(Array.isArray(v)&&v.length):!String(v??'').trim())out.push({f,why:'req'});
+    else if(f.t==='email'&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v))out.push({f,why:'email'});
+    else if(f.min&&String(v).trim().length<f.min)out.push({f,why:'min'});
+  });
+  if(step.id==='details'&&!R.type)out.push({f:STEPS.find(s=>s.id==='type').fields[0],why:'req'}); /* sans type, les détails ne sont pas complets */
+  if(step.photos)PHOTOS.filter(p=>!p.opt&&(!p.show||p.show(R))).forEach(p=>{if(!FILES.some(x=>x.cat===p.id&&x.fid)&&!(p.na&&R['na_'+p.id]))out.push({p})});
+  if(step.review&&!(R.accepte_exactitude&&R.accepte_conditions))out.push({consent:true});
+  return out;
+}
+const allMissing=()=>STEPS.map((s,i)=>({i,s,m:missingOf(s)})).filter(x=>x.m.length);
+
+/* ===================== Rendu ===================== */
+function applyLang(){
+  document.documentElement.lang=LANG;$('#lang').value=LANG;$('#h-sub').textContent=tr(UI.sub);
+  $('#b-prev').textContent=tr(UI.prev);$('#b-later').textContent=tr(UI.later);
+  $('#ms-t').textContent=tr(UI.savedT);$('#ms-p').textContent=tr(UI.savedP);$('#ms-copy').textContent=tr(UI.copy);$('#ms-close').textContent=tr(UI.close);
+}
+function renderSteps(){
+  $('#steps').innerHTML=STEPS.map((s,i)=>{const n=missingOf(s).length;const cls=i===STEPS.length-1?'':(n?'miss':'ok');
+    return `<button class="${cls}" data-i="${i}" ${i===CUR?'aria-current="step"':''}><i>${cls==='ok'?'✓':i+1}</i>${esc(tr(s.title))}</button>`}).join('');
+  $('#steps').querySelectorAll('button').forEach(b=>b.onclick=()=>go(+b.dataset.i));
+  $('#steps [aria-current]')?.scrollIntoView({block:'nearest',inline:'center'});
+}
+function fieldHTML(f){
+  if(!visible(f))return'';
+  if(f.t==='sub')return `<div class="sub">${esc(tr(f.l))}</div>`;
+  if(f.t==='warn')return `<div class="warn">${tr(f.html)}</div>`;
+  const v=R[f.id]??'';const id='q-'+f.id;const ph=f.ph?` placeholder="${esc(tr(f.ph))}"`:'';
+  const lab=`${esc(tr(f.l))}${f.opt?` <span class="help">(${tr(UI.opt)})</span>`:'<span class="req" aria-hidden="true">*</span>'}`;
+  const help=f.h?`<div class="help">${esc(tr(f.h))}</div>`:'';
+  const bad=`<div class="bad-msg" id="e-${f.id}"></div>`;
+  let input;
+  if(['text','email','tel','number','date'].includes(f.t))input=`<input class="inp" id="${id}" data-q="${f.id}" type="${f.t}" value="${esc(v)}"${ph}${f.ac?` autocomplete="${f.ac}"`:''}${f.t==='number'?' min="0" inputmode="decimal"':''}${f.list?' list="dl-cat"':''}>`;
+  else if(f.t==='textarea')input=`<textarea class="inp" id="${id}" data-q="${f.id}"${ph}>${esc(v)}</textarea>`;
+  else if(f.t==='country'){const all=PAYS.filter(c=>!PAYS_PRIO.includes(c)).map(c=>[c,paysNom(c)]).sort((a,b)=>a[1].localeCompare(b[1],LANG));
+    const o=([c,n])=>`<option value="${c}" ${v===c?'selected':''}>${esc(n)}</option>`;
+    input=`<select class="inp" id="${id}" data-q="${f.id}" data-re="1" autocomplete="country"><option value="">${tr(UI.choose)}</option>${PAYS_PRIO.map(c=>[c,paysNom(c)]).map(o).join('')}<option disabled>──────────</option>${all.map(o).join('')}</select>`}
+  else if(f.t==='select')input=`<select class="inp" id="${id}" data-q="${f.id}" data-re="1"><option value="">${tr(UI.choose)}</option>${f.o.map(([k,l])=>`<option value="${k}" ${String(v)===k?'selected':''}>${esc(tr(l))}</option>`).join('')}</select>`;
+  else if(f.t==='radio')input=`<div class="opts" role="radiogroup">${f.o.map(([k,l])=>`<label class="opt"><input type="radio" name="${id}" data-q="${f.id}" data-re="1" value="${k}" ${v===k?'checked':''}>${esc(tr(l))}</label>`).join('')}</div>`;
+  else if(f.t==='checks')input=`<div class="opts">${f.o.map(([k,l])=>`<label class="opt"><input type="checkbox" data-qc="${f.id}" value="${k}" ${(Array.isArray(v)&&v.includes(k))?'checked':''}>${esc(tr(l))}</label>`).join('')}</div>`;
+  else if(f.t==='types')return `<div class="f" id="w-${f.id}"><div class="lbl">${lab}</div><div class="typecards">${f.o.map(([k,ic,t1,t2])=>`<label class="typecard"><input type="radio" name="${id}" data-q="${f.id}" data-re="1" value="${k}" ${v===k?'checked':''}><span class="ic">${ic}</span><div><strong>${esc(tr(t1))}</strong><span>${esc(tr(t2))}</span></div></label>`).join('')}</div>${bad}</div>`;
+  const tag=['radio','checks'].includes(f.t)?'div':'label';
+  return `<div class="f" id="w-${f.id}"><${tag==='label'?`label for="${id}"`:'div class="lbl"'}>${lab}</${tag}>${help}${input}${bad}</div>`;
+}
+function photosHTML(){
+  const cats=PHOTOS.filter(p=>!p.show||p.show(R));
+  return `<div class="tips">${tr(UI.tips)}</div><div class="fields">${cats.map(p=>{
+    const list=FILES.filter(x=>x.cat===p.id);const ok=list.some(x=>x.fid);const na=p.na&&R['na_'+p.id];
+    const cnt=p.opt?(list.length?`<span class="pcount ok">${tr(UI.photoN(list.length))}</span>`:`<span class="pcount">${tr(UI.opt)}</span>`):(ok||na?`<span class="pcount ok">✓ ${list.length?tr(UI.photoN(list.length)):'—'}</span>`:`<span class="pcount miss">${tr(UI.photoReq)}</span>`);
+    return `<div class="pcat" id="w-p-${p.id}"><div class="pcat-h"><div><strong>${esc(tr(p.l))}${p.opt?'':'<span class="req" style="color:var(--red)">*</span>'}</strong><span>${esc(tr(p.h))}</span></div>${cnt}</div>
+    <div class="thumbs">${list.map(x=>`<div class="th${x.err?' err':''}">${x.url?`<img src="${x.url}" alt="">`:(x.mime==='application/pdf'?'PDF':'…')}${x.busy?'<div class="ld"><span class="spin"></span></div>':''}${x.busy?'':`<button class="x" data-rm="${esc(x.key)}" aria-label="×">×</button>`}</div>`).join('')}
+      ${na?'':`<label class="addp">${tr(UI.add)}<input type="file" hidden multiple accept="image/*${p.pdf?',application/pdf':''}" data-up="${p.id}"></label>`}</div>
+    ${p.na?`<label class="na"><input type="checkbox" data-na="${p.id}" ${na?'checked':''}>${esc(tr(p.naL))}</label>${na?`<div class="warn">${esc(tr(p.naW))}</div>`:''}`:''}</div>`}).join('')}</div>`;
+}
+function valueText(f,v,lang){
+  const pick=o=>o?(o[lang]||o.fr):'';
+  if(f.t==='country')return v?paysNom(v,lang):'';
+  if(f.t==='checks')return (v||[]).map(k=>pick((f.o.find(o=>o[0]===k)||[])[1])||k).join(', ');
+  if(f.o){const o=f.o.find(o=>o[0]===v);return o?pick(f.t==='types'?o[2]:o[1]):(v||'')}
+  return String(v??'');
+}
+function summary(lang){
+  const pick=o=>o?(o[lang]||o.fr):'';
+  const out=STEPS.filter(s=>s.fields).map(s=>({s:pick(s.title),i:STEPS.indexOf(s),items:flat(s.fields).filter(f=>f.id&&visible(f)&&String(R[f.id]??'')!=='').map(f=>[pick(f.l),valueText(f,R[f.id],lang)])}));
+  out.push({s:pick(STEPS.find(s=>s.photos).title),i:STEPS.findIndex(s=>s.photos),items:PHOTOS.filter(p=>!p.show||p.show(R)).map(p=>{const n=FILES.filter(x=>x.cat===p.id&&x.fid).length;return[pick(p.l),p.na&&R['na_'+p.id]?pick(p.naL):String(n)]})});
+  return out;
+}
+function reviewHTML(){
+  const miss=allMissing().filter(x=>x.i!==STEPS.length-1||x.m.some(m=>!m.consent));
+  const consentMiss=!(R.accepte_exactitude&&R.accepte_conditions);
+  return `<div class="review">${summary(LANG).map(s=>`<section><h3>${esc(s.s)}<button data-go="${s.i}">${tr(UI.edit)}</button></h3><dl>${s.items.map(([a,b])=>`<dt>${esc(a)}</dt><dd>${esc(b)}</dd>`).join('')}</dl></section>`).join('')}</div>
+  <div class="legal" style="margin-top:16px"><h2>${tr(UI.legalT)}</h2><ol>${UI.legal.map(x=>`<li>${esc(tr(x))}</li>`).join('')}</ol></div>
+  <div class="fields" style="margin-top:14px">
+   <label class="consent"><input type="checkbox" data-cs="accepte_exactitude" ${R.accepte_exactitude?'checked':''}><span>${esc(tr(UI.c1))}</span></label>
+   <label class="consent"><input type="checkbox" data-cs="accepte_conditions" ${R.accepte_conditions?'checked':''}><span>${esc(tr(UI.c2))}</span></label>
+   ${miss.length||consentMiss?`<div class="missing"><b>${tr(UI.missT)}</b><ul>${miss.map(x=>`<li><a data-go="${x.i}">${esc(tr(x.s.title))}</a> : ${x.m.map(m=>m.f?esc(tr(m.f.l)):m.p?esc(tr(m.p.l)):'').filter(Boolean).join(', ')}</li>`).join('')}${consentMiss?`<li>${tr(UI.consentMiss)}</li>`:''}</ul><div style="margin-top:6px">${tr(UI.blocked)}</div></div>`:''}
+  </div>`;
+}
+function render(){
+  const s=STEPS[CUR];
+  let h=`<h1>${esc(tr(s.title))}</h1>`;
+  if(s.intro)h+=`<div class="intro"><b>${tr(UI.introT)}</b> ${tr(UI.introP)}<ul>${UI.introL.map(x=>`<li>${tr(x)}</li>`).join('')}</ul><div style="margin-top:8px">${tr(UI.introS)}</div><div style="margin-top:8px;font-weight:600">⚠ ${tr(UI.introW)}</div></div>`;
+  if(s.id==='type'&&!R.type)h+=`<p class="lead">${tr(L4('La suite du formulaire s’adapte à votre réponse.','El resto del formulario se adapta a su respuesta.','The rest of the form adapts to your answer.','Il resto del modulo si adatta alla risposta.'))}</p>`;
+  if(s.fields)h+=`<div class="fields">${s.fields.map(f=>f.row?(f.row.some(visible)?`<div class="row2">${f.row.map(fieldHTML).join('')}</div>`:''):fieldHTML(f)).join('')}</div>`;
+  if(s.photos)h+=photosHTML();
+  if(s.review)h+=reviewHTML();
+  $('#card').innerHTML=h+(CATALOG.length?`<datalist id="dl-cat">${CATALOG.map(c=>`<option value="${esc(c)}">`).join('')}</datalist>`:'');
+  bind();renderSteps();renderBar();
+  if(s._shown)markMissing(s);
+}
+function renderBar(){
+  const last=CUR===STEPS.length-1;$('#b-prev').disabled=CUR===0;
+  const b=$('#b-next');b.textContent=last?tr(UI.send):tr(UI.next);b.disabled=last&&allMissing().length>0;
+}
+function markMissing(s){
+  const m=missingOf(s);
+  document.querySelectorAll('.f.bad,.pcat.bad').forEach(e=>e.classList.remove('bad'));
+  m.forEach(x=>{
+    if(x.f){const w=$('#w-'+x.f.id);if(w){w.classList.add('bad');$('#e-'+x.f.id).textContent=x.why==='email'?tr(UI.badEmail):x.why==='min'?tr(UI.minText):tr(UI.req)}}
+    if(x.p)$('#w-p-'+x.p.id)?.classList.add('bad');
+  });
+  return m;
+}
+function bind(){
+  const card=$('#card');
+  card.querySelectorAll('[data-q]').forEach(el=>{
+    const ev=el.dataset.re?'change':'input';
+    el.addEventListener(ev,()=>{R[el.dataset.q]=el.type==='radio'?el.value:el.value;changed();if(el.dataset.re){render()}else{if(STEPS[CUR]._shown)markMissing(STEPS[CUR]);renderSteps();renderBar()}});
+  });
+  card.querySelectorAll('[data-qc]').forEach(el=>el.addEventListener('change',()=>{const k=el.dataset.qc;R[k]=[...card.querySelectorAll(`[data-qc="${k}"]:checked`)].map(x=>x.value);changed();if(STEPS[CUR]._shown)markMissing(STEPS[CUR]);renderSteps();renderBar()}));
+  card.querySelectorAll('[data-cs]').forEach(el=>el.addEventListener('change',()=>{R[el.dataset.cs]=el.checked;changed();render()}));
+  card.querySelectorAll('[data-na]').forEach(el=>el.addEventListener('change',()=>{R['na_'+el.dataset.na]=el.checked;changed();render()}));
+  card.querySelectorAll('[data-go]').forEach(el=>el.onclick=()=>go(+el.dataset.go));
+  card.querySelectorAll('[data-up]').forEach(el=>el.onchange=()=>{addFiles(el.dataset.up,[...el.files]);el.value=''});
+  card.querySelectorAll('[data-rm]').forEach(el=>el.onclick=()=>removeFile(el.dataset.rm));
+}
+function go(i){
+  if(i<0||i>=STEPS.length)return;
+  STEPS[CUR]._shown=true;CUR=i;render();window.scrollTo({top:0,behavior:'smooth'});saveNow();
+}
+$('#b-prev').onclick=()=>go(CUR-1);
+$('#b-next').onclick=()=>{
+  if(CUR===STEPS.length-1){submit();return}
+  const s=STEPS[CUR];s._shown=true;const m=markMissing(s);
+  if(m.length){const first=m[0];const el=first.f?$('#w-'+first.f.id):first.p?$('#w-p-'+first.p.id):null;el?.scrollIntoView({behavior:'smooth',block:'center'})}
+  go(CUR+1); /* on peut avancer : les manques restent signalés et bloquent l'envoi */
+};
+$('#lang').onchange=e=>{LANG=e.target.value;lsSet('rf_lang',LANG);applyLang();render();changed()};
+
+/* ===================== Enregistrement ===================== */
+function setSaveState(s){const e=$('#savest');e.classList.toggle('err',s==='off');
+  e.innerHTML=s==='busy'?`<span class="spin" style="width:12px;height:12px;vertical-align:-2px"></span> ${tr(UI.saving)}`:s==='off'?tr(UI.offline):lastSaved?`✓ ${tr(UI.savedAt)} ${lastSaved.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}`:''}
+function changed(){lsSet(LKEY,{r:R,ts:Date.now()});clearTimeout(saveTimer);saveTimer=setTimeout(saveNow,2500)}
+let saving=null;
+async function saveNow(){
+  clearTimeout(saveTimer);if(saving)return saving;
+  setSaveState('busy');
+  saving=api('formSave',{reponses:R,lang:LANG}).then(()=>{lastSaved=new Date();setSaveState('ok');return true}).catch(e=>{setSaveState('off');return false}).finally(()=>saving=null);
+  return saving;
+}
+$('#b-later').onclick=async()=>{await saveNow();$('#ms-link').value=location.href;$('#m-saved').hidden=false};
+$('#ms-close').onclick=()=>$('#m-saved').hidden=true;
+$('#ms-copy').onclick=async()=>{try{await navigator.clipboard.writeText($('#ms-link').value);toast(tr(UI.copied))}catch(_){$('#ms-link').select()}};
+
+/* ===================== Photos ===================== */
+let upQueue=Promise.resolve(),keyN=0;
+async function prep(file){
+  if(file.type==='application/pdf')return{blob:file,mime:'application/pdf'};
+  try{const bmp=await createImageBitmap(file);const s=Math.min(1,MAX_PX/Math.max(bmp.width,bmp.height));
+    const cv=document.createElement('canvas');cv.width=Math.round(bmp.width*s);cv.height=Math.round(bmp.height*s);cv.getContext('2d').drawImage(bmp,0,0,cv.width,cv.height);
+    return{blob:await new Promise(r=>cv.toBlob(r,'image/jpeg',.9)),mime:'image/jpeg'}}
+  catch(_){return{blob:file,mime:/^image\/(jpeg|png|webp|heic|heif)$/.test(file.type)?file.type:'image/jpeg'}}
+}
+const b64=b=>new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(String(r.result).split(',')[1]);r.onerror=rej;r.readAsDataURL(b)});
+function addFiles(cat,files){
+  files.forEach(file=>{
+    const x={key:'k'+(++keyN),cat,busy:true,mime:file.type,url:file.type.startsWith('image/')?URL.createObjectURL(file):''};FILES.push(x);
+    upQueue=upQueue.then(async()=>{
+      try{const p=await prep(file);const r=await api('formUpload',{cat,file:{mime:p.mime,name:file.name,data:await b64(p.blob)}});
+        x.fid=r.fid;x.name=r.name;x.busy=false;x.err=false}
+      catch(e){x.busy=false;x.err=true;toast(tr(UI.upErr)+(e.net?'':' ('+e.message+')'))}
+      if(STEPS[CUR].photos)render();else{renderSteps();renderBar()}
+    });
+  });
+  render();
+}
+async function removeFile(key){
+  const x=FILES.find(f=>f.key===key);if(!x)return;
+  FILES=FILES.filter(f=>f!==x);render();
+  if(x.fid){try{await api('formRemoveFile',{fid:x.fid})}catch(_){}}
+}
+function loadThumb(x){api('formMedia',{fid:x.fid}).then(m=>{if(m&&m.data){x.url=`data:${m.mime};base64,${m.data}`;if(STEPS[CUR].photos)render()}}).catch(()=>{})}
+
+/* ===================== Envoi ===================== */
+async function submit(){
+  if(allMissing().length){render();return}
+  const b=$('#b-next');b.disabled=true;b.textContent=tr(UI.sending);
+  try{await api('formSubmit',{reponses:R,resume:summary('fr').map(({s,items})=>({s,items})),lang:LANG});
+    try{localStorage.removeItem(LKEY)}catch(_){}
+    showDone(new Date().toISOString());
+  }catch(e){toast(e.net?tr(UI.offline):e.message);renderBar()}
+}
+function showDone(when){
+  $('#app').hidden=true;$('#bar').hidden=true;$('#savest').textContent='';
+  const d=$('#done');d.hidden=false;
+  d.innerHTML=`<div class="big">✅</div><h1>${tr(UI.doneT)}</h1><p>${tr(UI.doneP)} <b>${esc(CASE_ID)}</b></p>${when?`<p class="lead">${tr(UI.doneOn)} ${new Date(when).toLocaleString()}</p>`:''}`;
+}
+function showError(t,p){$('#loading').hidden=true;const d=$('#done');d.hidden=false;d.innerHTML=`<div class="big">⚠️</div><h1>${tr(t)}</h1><p>${tr(p)}</p>`}
+
+/* ===================== Démarrage ===================== */
+(async function boot(){
+  const nav=(navigator.language||'fr').slice(0,2);
+  LANG=lsGet('rf_lang')||(['fr','es','en','it'].includes(nav)?nav:'en');applyLang();
+  if(!TOKEN){showError(UI.badT,UI.badP);return}
+  let d;
+  try{d=await api('formGet')}catch(e){showError(e.net?UI.netT:UI.badT,e.net?UI.netP:UI.badP);return}
+  CASE_ID=d.caseId||'';CATALOG=d.catalogue||[];
+  if(!lsGet('rf_lang')&&d.lang)LANG=['fr','es','en','it'].includes(d.lang)?d.lang:'en';applyLang();
+  $('#loading').hidden=true;
+  if(d.statut==='soumis'){showDone(d.envoye);return}
+  R=Object.assign({},d.prefill?Object.fromEntries(Object.entries(d.prefill).filter(([,v])=>v!==''&&v!=null).map(([k,v])=>[k,String(v)])):{},d.reponses||{});
+  const local=lsGet(LKEY);if(local&&local.r)R=Object.assign(R,local.r);
+  if(!PAYS.includes(R.pays))R.pays=paysDepuisEmail(R.email);
+  FILES=(d.fichiers||[]).map(f=>({key:'k'+(++keyN),fid:f.fid,cat:f.cat,name:f.name,mime:/\.pdf$/i.test(f.name)?'application/pdf':'image/jpeg'}));
+  FILES.filter(f=>f.mime!=='application/pdf').forEach(loadThumb);
+  const firstMiss=allMissing()[0];CUR=Object.keys(d.reponses||{}).length&&firstMiss?firstMiss.i:0;
+  $('#app').hidden=false;$('#bar').hidden=false;render();
+  if(local&&local.r)changed();
+})();
+</script>
+</body>
+</html>
