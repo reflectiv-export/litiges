@@ -346,7 +346,9 @@ function renderSteps(){
   $('#steps').innerHTML=STEPS.map((s,i)=>{const n=missingOf(s).length;const cls=i===STEPS.length-1?'':(n?'miss':'ok');
     return `<button class="${cls}" data-i="${i}" ${i===CUR?'aria-current="step"':''}><i>${cls==='ok'?'✓':i+1}</i>${esc(tr(s.title))}</button>`}).join('');
   $('#steps').querySelectorAll('button').forEach(b=>b.onclick=()=>go(+b.dataset.i));
-  $('#steps [aria-current]')?.scrollIntoView({block:'nearest',inline:'center'});
+  /* centre l'étape courante en faisant défiler UNIQUEMENT la barre des étapes (pas la page) */
+  const nav=$('#steps'),cur=nav.querySelector('[aria-current]');
+  if(cur)nav.scrollLeft+=(cur.getBoundingClientRect().left-nav.getBoundingClientRect().left)-(nav.clientWidth-cur.offsetWidth)/2;
 }
 function fieldHTML(f){
   if(!visible(f))return'';
@@ -405,6 +407,9 @@ function reviewHTML(){
 }
 function render(){
   const s=STEPS[CUR];
+  /* on garde la position de la page et le champ actif : cocher une case ne doit rien faire bouger */
+  const y=window.scrollY,ae=document.activeElement;
+  const keep=ae&&$('#card').contains(ae)?(ae.id?'#'+ae.id:ae.name?`[name="${ae.name}"][value="${ae.value}"]`:ae.dataset.cs?`[data-cs="${ae.dataset.cs}"]`:ae.dataset.na?`[data-na="${ae.dataset.na}"]`:ae.dataset.qc?`[data-qc="${ae.dataset.qc}"][value="${ae.value}"]`:''):'';
   let h=`<h1>${esc(tr(s.title))}</h1>`;
   if(s.intro)h+=`<div class="intro"><b>${tr(UI.introT)}</b> ${tr(UI.introP)}<ul>${UI.introL.map(x=>`<li>${tr(x)}</li>`).join('')}</ul><div style="margin-top:8px">${tr(UI.introS)}</div><div style="margin-top:8px;font-weight:600">⚠ ${tr(UI.introW)}</div></div>`;
   if(s.id==='type'&&!R.type)h+=`<p class="lead">${tr(L4('La suite du formulaire s’adapte à votre réponse.','El resto del formulario se adapta a su respuesta.','The rest of the form adapts to your answer.','Il resto del modulo si adatta alla risposta.'))}</p>`;
@@ -414,6 +419,8 @@ function render(){
   $('#card').innerHTML=h+(CATALOG.length?`<datalist id="dl-cat">${CATALOG.map(c=>`<option value="${esc(c)}">`).join('')}</datalist>`:'');
   bind();renderSteps();renderBar();
   if(s._shown)markMissing(s);
+  if(keep){try{$('#card').querySelector(keep)?.focus({preventScroll:true})}catch(_){}}
+  window.scrollTo(0,y);
 }
 function renderBar(){
   const last=CUR===STEPS.length-1;$('#b-prev').disabled=CUR===0;
