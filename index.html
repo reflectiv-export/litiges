@@ -361,7 +361,7 @@ details.dsec>summary small{font-weight:400;color:var(--muted);font-size:13px}
 <div class="login" id="login">
   <div class="mbox sm">
     <div class="brand"><span class="logo">🪟</span>Litiges <small>Reflectiv</small></div>
-    <div class="field" id="url-field"><label for="l-url" data-t="apiUrl"></label><input class="inp" id="l-url" placeholder="https://script.google.com/macros/s/…/exec"></div>
+    <div class="field" id="url-field"><label for="l-url" data-t="apiUrl"></label><input class="inp" id="l-url" name="api-url" type="url" autocomplete="off" placeholder="https://script.google.com/macros/s/…/exec"></div>
     <div class="field"><label for="l-pin" data-t="pin"></label><input class="inp" id="l-pin" type="password" inputmode="numeric" autocomplete="current-password"></div>
     <button class="btn primary" id="l-go" data-t="enter" style="justify-content:center"></button>
     <span class="note" id="l-err"></span>
@@ -411,7 +411,7 @@ details.dsec>summary small{font-weight:400;color:var(--muted);font-size:13px}
 
     <div class="stpills" id="stpills" role="group"></div>
     <div class="toolbar">
-      <div class="search"><input class="inp" id="f-q" type="search" aria-label="Rechercher"></div>
+      <div class="search"><input class="inp" id="f-q" name="recherche-dossiers" type="search" autocomplete="off" aria-label="Rechercher"></div>
       <button class="btn" id="b-filters" aria-expanded="false"><span data-t="moreFilters"></span><span class="badge" id="nfil" hidden></span></button>
     </div>
     <div class="filters" id="filters" hidden>
@@ -839,7 +839,10 @@ function fillFilterSelects(){fillSort();
 FIL.forEach(s=>$(s).addEventListener('input',renderList));
 $('#f-clear').onclick=()=>{FIL.forEach(s=>$(s).value='');STATUS='';renderList()};
 $('#b-filters').onclick=()=>{const f=$('#filters');f.hidden=!f.hidden;$('#b-filters').setAttribute('aria-expanded',!f.hidden)};
+/* le navigateur colle parfois l'adresse du serveur (enregistrée avec le PIN) dans la recherche : on l'enlève */
+function cleanSearch(){const q=$('#f-q');if(/^https?:\/\//i.test(q.value.trim())){q.value='';return true}return false}
 function filtered(){
+  cleanSearch();
   const [q,cli,ref,tp,d1,d2]=FIL.map(s=>$(s).value);const nq=norm(q);
   return CASOS.filter(c=>svcOk(c)&&(!cli||c.cliente===cli)&&(!ref||c.referencia===ref)&&(!tp||tipoOf(c)===tp)&&(!STATUS||c.estado===STATUS)&&(!d1||String(c.fechaReclamo)>=d1)&&(!d2||String(c.fechaReclamo)<=d2)
     &&(!nq||norm([c.cliente,c.resumeFr,c.resumeEn,c.textoOriginal,c.pedido,c.referencia,c.id].join(' ')).includes(nq)))
@@ -1429,6 +1432,7 @@ setHH();addEventListener('resize',setHH);
 applyI18n();
 showGuide(!lsGet('lit_guide_off'));
 if(!API_URL||!PIN)showLogin();else{$('#login').hidden=true;load()}
+[300,1200,3000].forEach(ms=>setTimeout(()=>{if(cleanSearch()&&CASOS.length)renderList()},ms)); /* le remplissage automatique arrive après le chargement */
 setInterval(()=>{if(document.visibilityState==='visible'&&API_URL&&PIN&&$('#login').hidden)checkUpdates()},90000);
 </script>
 </body>
