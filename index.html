@@ -3,351 +3,219 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="color-scheme" content="light">
 <title>Litiges Reflectiv</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🪟</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <style>
-/* ============ Thème clair unique ============ */
 :root{
-  --bg:#F4F6F8; --surface:#FFFFFF; --ink:#1D2939; --ink2:#344054; --muted:#667085; --line:#E4E7EC; --line2:#D0D5DD;
-  --pri:#0B6E85; --pri-h:#095A6D; --pri-soft:#E4F3F6;
-  --amber:#B54708; --amber-soft:#FEF0C7; --red:#B42318; --red-soft:#FEE4E2; --ok:#067647; --ok-soft:#DCFAE6;
-  --blue:#175CD3; --blue-soft:#E0EAFF; --violet:#5925DC; --violet-soft:#EBE9FE;
-  --t-transporte:#2E6FD8; --t-fabricacion:#D92D20; --t-envejecimiento:#DC8A06; --t-instalacion:#7A5AF8; --t-pendiente:#98A2B3;
-  --shadow:0 1px 2px rgba(16,24,40,.05); --shadow-lg:0 16px 40px rgba(16,24,40,.14);
-  --f:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
-  color-scheme:light;
+  --paper:#F3F6F6; --surface:#FFFFFF; --ink:#18262C; --muted:#5F7076; --line:#D9E1E0;
+  --glass:#0F5566; --glass-soft:#DCECEF; --amber:#C98512; --amber-soft:#FBEFD8;
+  --litige:#B8392F; --litige-soft:#F8E3E0; --ok:#2E7D4F; --ok-soft:#DFF0E5;
+  --t-transporte:#3B6FB6; --t-fabricacion:#B8392F; --t-envejecimiento:#C98512; --t-instalacion:#6B5BA8; --t-pendiente:#7C8A8F;
+  --shadow:0 1px 2px rgba(24,38,44,.06),0 8px 24px rgba(24,38,44,.06);
+  --f:"Nunito",ui-rounded,"SF Pro Rounded",system-ui,-apple-system,"Segoe UI",sans-serif;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
 }
-*,*::before,*::after{box-sizing:border-box}
-html{height:100%}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f);font-size:14.5px;line-height:1.5;min-height:100%;font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#0E1619;--surface:#162127;--ink:#E4ECEC;--muted:#93A4A9;--line:#27363C;
+  --glass:#6BB8C8;--glass-soft:#17343B;--amber:#E3A73C;--amber-soft:#3A2D14;
+  --litige:#E0685E;--litige-soft:#3B1D1A;--ok:#5DBB85;--ok-soft:#173226;}}
+:root[data-theme="dark"]{--paper:#0E1619;--surface:#162127;--ink:#E4ECEC;--muted:#93A4A9;--line:#27363C;
+  --glass:#6BB8C8;--glass-soft:#17343B;--amber:#E3A73C;--amber-soft:#3A2D14;--litige:#E0685E;--litige-soft:#3B1D1A;--ok:#5DBB85;--ok-soft:#173226;}
+html{scroll-padding-top:env(safe-area-inset-top,0px);height:100%}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--f);font-size:15px;line-height:1.5;height:100%;font-variant-numeric:tabular-nums}
 button,input,select,textarea{font:inherit;color:inherit}
 img{max-width:100%;display:block}
-:focus-visible{outline:2px solid var(--pri);outline-offset:2px}
-[hidden]{display:none!important}
-h1,h2,h3{letter-spacing:-.01em}
+:focus-visible{outline:2px solid var(--glass);outline-offset:2px}
 
-/* ---- boutons & champs ---- */
-.btn{border:1px solid var(--line2);background:var(--surface);padding:8px 14px;border-radius:10px;cursor:pointer;font-weight:600;font-size:14px;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;box-shadow:var(--shadow);text-decoration:none;color:var(--ink2)}
-.btn:hover{background:#F9FAFB;border-color:var(--muted)}
-.btn.primary{background:var(--pri);border-color:var(--pri);color:#fff}
-.btn.primary:hover{background:var(--pri-h)}
-.btn.ghost{border-color:transparent;background:none;box-shadow:none}
-.btn.ghost:hover{background:var(--bg)}
-.btn.icon{padding:6px 10px;font-size:16px;line-height:1}
-.btn:disabled{opacity:.5;cursor:default}
-.btn.sm{padding:5px 10px;font-size:13px}
-.inp{width:100%;border:1px solid var(--line2);background:var(--surface);border-radius:10px;padding:8px 11px;font-size:14px}
-.inp:focus{border-color:var(--pri);outline:3px solid var(--pri-soft);outline-offset:0}
-textarea.inp{resize:vertical;min-height:80px;line-height:1.5}
-.inp.auto{width:auto}
-.field label,.flabel{display:block;font-size:12.5px;font-weight:600;color:var(--ink2);margin-bottom:4px}
-.note{font-size:13px;color:var(--muted)}
-.hint{font-size:13px;color:var(--muted)}
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--surface);border-bottom:1px solid var(--line)}
+.top-in{display:flex;align-items:center;gap:16px;padding:10px 20px;max-width:1400px;margin:0 auto;flex-wrap:wrap}
+.brand{font-weight:800;font-size:20px;letter-spacing:-.01em}
+.brand span{font-weight:600;color:var(--muted);font-size:14px;margin-left:6px}
+.tabs{display:flex;gap:2px;background:var(--paper);padding:3px;border-radius:12px}
+.tab{border:0;background:none;padding:7px 14px;border-radius:10px;cursor:pointer;font-weight:700;color:var(--muted);display:flex;gap:6px;align-items:center}
+.tab[aria-selected="true"]{background:var(--surface);color:var(--ink);box-shadow:var(--shadow)}
+.tab .n{font-size:12px;background:var(--amber);color:#fff;border-radius:99px;padding:0 7px;min-width:20px;text-align:center}
 .spacer{flex:1}
+.lang{display:flex;border:1px solid var(--line);border-radius:99px;overflow:hidden}
+.lang button{border:0;background:none;padding:4px 10px;cursor:pointer;font-weight:700;font-size:13px;color:var(--muted)}
+.lang button[aria-pressed="true"]{background:var(--ink);color:var(--surface)}
+.btn{border:1px solid var(--line);background:var(--surface);padding:8px 15px;border-radius:10px;cursor:pointer;font-weight:700;font-size:14px;display:inline-flex;align-items:center;gap:6px}
+.btn:hover{border-color:var(--glass)}
+.btn.primary{background:var(--glass);border-color:var(--glass);color:#fff}
+.btn.ghost{border-color:transparent;background:none}
+.btn:disabled{opacity:.5;cursor:default}
+.btn.sm{padding:5px 11px;font-size:13px}
+main{max-width:1400px;margin:0 auto;padding:20px}
+.view[hidden]{display:none}
 
-/* ---- en-tête ---- */
-.top{position:sticky;top:0;z-index:20;background:var(--surface);border-bottom:1px solid var(--line)}
-.top-in{display:flex;align-items:center;gap:14px;padding:10px 20px;max-width:1320px;margin:0 auto;flex-wrap:wrap}
-.brand{font-weight:700;font-size:17px;display:flex;align-items:center;gap:9px}
-.brand .logo{width:30px;height:30px;border-radius:8px;background:var(--pri);color:#fff;display:grid;place-items:center;font-size:15px}
-.brand small{font-weight:500;color:var(--muted);font-size:13px}
-.tabs{display:flex;gap:4px}
-.tab{border:0;background:none;padding:8px 12px;border-radius:8px;cursor:pointer;font-weight:600;color:var(--muted);display:flex;gap:7px;align-items:center}
-.tab:hover{background:var(--bg);color:var(--ink)}
-.tab[aria-selected="true"]{background:var(--pri-soft);color:var(--pri)}
-.tab .n{font-size:12px;background:var(--amber);color:#fff;border-radius:99px;padding:0 7px;min-width:20px;text-align:center;font-weight:700}
-.upd{border-color:var(--pri);color:var(--pri);background:var(--pri-soft)}
-@media (max-width:760px){.tabs{order:9;width:100%;justify-content:space-between}.tab{flex:1;justify-content:center;padding:8px 6px;font-size:13.5px}.brand small{display:none}}
+.chip{display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:600;padding:1px 9px;border-radius:99px;background:var(--paper);border:1px solid var(--line);white-space:nowrap}
+.chip .dot{width:8px;height:8px;border-radius:50%}
+.chip.ref{background:var(--glass-soft);border-color:transparent;color:var(--glass);font-weight:800}
+.chip.rec{background:var(--litige-soft);border-color:transparent;color:var(--litige);font-weight:700}
+.chip.st-a{background:var(--amber-soft);border-color:transparent;color:var(--amber)}
+.chip.st-d{background:var(--glass-soft);border-color:transparent;color:var(--glass)}
+.chip.st-c{background:var(--ok-soft);border-color:transparent;color:var(--ok)}
 
-.menu{position:relative}
-.menu summary{list-style:none}
-.menu summary::-webkit-details-marker{display:none}
-.menu-pop{position:absolute;right:0;top:calc(100% + 6px);background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow-lg);padding:6px;min-width:230px;display:grid;gap:2px;z-index:30}
-.menu-pop>button{border:0;background:none;text-align:left;padding:9px 10px;border-radius:8px;cursor:pointer;font-weight:500;display:flex;gap:10px;align-items:center}
-.menu-pop>button:hover{background:var(--bg)}
-.menu-pop>button i{font-style:normal;width:18px;text-align:center;color:var(--muted)}
-.menu-lang{display:flex;align-items:center;justify-content:space-between;padding:8px 10px;border-top:1px solid var(--line);margin-top:4px}
-.lang{display:flex;border:1px solid var(--line2);border-radius:8px;overflow:hidden}
-.lang button{border:0;background:none;padding:4px 12px;cursor:pointer;font-weight:600;font-size:13px;color:var(--muted)}
-.lang button[aria-pressed="true"]{background:var(--pri);color:#fff}
-
-main{max-width:1320px;margin:0 auto;padding:22px 20px 60px}
-@media (max-width:600px){main{padding:16px 16px 60px}}
-.pagehead{display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap}
-.pagehead h1{font-size:22px;margin:0;font-weight:700}
-.count{color:var(--muted);font-size:14px}
-
-/* ---- guide ---- */
-.guide{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-bottom:18px;box-shadow:var(--shadow)}
-.guide-h{display:flex;align-items:center;gap:10px;margin-bottom:12px}
-.guide-h strong{font-size:15px}
-.steps{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
-@media (max-width:900px){.steps{grid-template-columns:1fr 1fr}}
-@media (max-width:520px){.steps{grid-template-columns:1fr}}
-.steps li{display:flex;gap:10px;align-items:flex-start;font-size:13.5px;color:var(--muted)}
-.steps li strong{display:block;color:var(--ink);font-size:14px}
-.num{flex:none;width:26px;height:26px;border-radius:50%;background:var(--pri-soft);color:var(--pri);display:inline-grid;place-items:center;font-weight:700;font-size:13px;font-style:normal}
-
-/* ---- chips ---- */
-.chip{display:inline-flex;align-items:center;gap:5px;font-size:12.5px;font-weight:600;padding:2px 9px;border-radius:99px;background:var(--bg);color:var(--ink2);white-space:nowrap}
-.chip .dot,.dot{width:8px;height:8px;border-radius:50%;display:inline-block;flex:none}
-.chip.ref{background:var(--pri-soft);color:var(--pri)}
-.chip.rec{background:var(--red-soft);color:var(--red)}
-.chip.new{background:var(--amber);color:#fff}
-.st{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:600;padding:3px 10px;border-radius:99px;white-space:nowrap}
-.st::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
-.st-analyse{background:var(--amber-soft);color:var(--amber)}
-.st-attente{background:var(--red-soft);color:var(--red)}
-.st-diagnostique{background:var(--blue-soft);color:var(--blue)}
-.st-repondu{background:var(--violet-soft);color:var(--violet)}
-.st-clos{background:var(--ok-soft);color:var(--ok)}
-.st-formulaire{background:#E0F2FE;color:#026AA2}
-.chip.fm{background:#E0F2FE;color:#026AA2}
-.chip.fm.ok{background:var(--ok-soft);color:var(--ok)}
-.cinfo{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:13.5px;color:var(--ink2);margin-top:10px}
-.cinfo .miss{color:var(--amber);font-weight:600}
-.fbox{border:1px solid var(--line);border-radius:10px;padding:12px 14px;display:grid;gap:10px}
-.fsteps{list-style:none;margin:0;padding:0;display:grid;gap:4px;font-size:13.5px}
-.fsteps li{display:flex;gap:8px;align-items:center;color:var(--muted)}
-.fsteps li.on{color:var(--ink);font-weight:600}
-.fsteps li i{font-style:normal;width:18px;text-align:center}
-.fans{display:grid;gap:10px}
-.fans h4{margin:0 0 4px;font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--pri)}
-.fans dl{margin:0;display:grid;grid-template-columns:minmax(110px,42%) 1fr;gap:3px 10px;font-size:13.5px}
-.fans dt{color:var(--muted)}
-.fans dd{margin:0;word-break:break-word}
-.fphotos{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
-.fphotos img{width:64px;height:64px;object-fit:cover;border-radius:8px;cursor:zoom-in;background:var(--bg)}
-textarea.msgbox{min-height:260px;font-size:14px}
-.stepper li small{display:block;font-size:11.5px;font-weight:500;color:var(--muted)}
-
-/* ---- barre de filtres ---- */
-.stpills{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
-.pill{border:1px solid var(--line2);background:var(--surface);border-radius:99px;padding:5px 12px;cursor:pointer;font-weight:600;font-size:13px;color:var(--ink2);display:inline-flex;gap:7px;align-items:center}
-.pill span{color:var(--muted);font-weight:600}
-.pill:hover{border-color:var(--muted)}
-.pill[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:#fff}
-.pill[aria-pressed="true"] span{color:#D0D5DD}
-.toolbar{display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap}
-.toolbar .search{flex:1;min-width:200px;position:relative}
-.toolbar .search::before{content:"⌕";position:absolute;left:11px;top:50%;transform:translateY(-52%);color:var(--muted);font-size:17px}
-.toolbar .search .inp{padding-left:32px}
-.badge{background:var(--pri);color:#fff;border-radius:99px;font-size:11.5px;padding:0 7px;font-weight:700}
-.filters{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px;display:grid;grid-template-columns:repeat(5,minmax(0,1fr)) auto;gap:10px;align-items:end;margin-bottom:14px}
-@media (max-width:900px){.filters{grid-template-columns:1fr 1fr}}
-
-/* ---- liste ---- */
+.ops{display:grid;grid-template-columns:240px 1fr;gap:20px;align-items:start}
+@media (max-width:860px){.ops{grid-template-columns:1fr}}
+.filters{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px;display:grid;gap:10px;position:sticky;top:80px}
+@media (max-width:860px){.filters{position:static;grid-template-columns:1fr 1fr}}
+.filters label,.field label{display:block;font-size:12.5px;font-weight:700;color:var(--muted);margin-bottom:3px}
+.inp{width:100%;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:7px 10px;font-size:14px}
+textarea.inp{resize:vertical;min-height:80px}
+.listhead{display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap}
+.listhead h1{font-size:24px;margin:0;font-weight:800}
+.count{color:var(--muted)}
 .rows{display:grid;gap:8px}
-.mdiv{display:flex;align-items:center;gap:10px;margin:14px 2px 2px;font-size:12.5px;font-weight:600;color:var(--muted);text-transform:capitalize}
+.row{display:grid;grid-template-columns:76px 1fr auto;gap:14px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:10px;cursor:pointer;text-align:left;width:100%}
+.row:hover{border-color:var(--glass)}
+.thumb{width:76px;height:76px;border-radius:12px;object-fit:cover;background:var(--glass-soft)}
+div.thumb{display:grid;place-items:center;color:var(--muted);font-size:11px}
+.row>.rbody{grid-column:2;min-width:0}
+.row>.side{grid-column:3}
+@media (max-width:600px){.row>.side{grid-column:1/-1}}
+.mdiv{display:flex;align-items:center;gap:10px;margin:12px 4px 0;font-size:12.5px;font-weight:700;color:var(--muted);text-transform:capitalize}
 .mdiv::after{content:"";flex:1;height:1px;background:var(--line)}
+.mdiv span{font-weight:600;opacity:.8}
 .mdiv:first-child{margin-top:0}
-.row{display:grid;grid-template-columns:64px minmax(0,1fr) auto;gap:14px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 14px 10px 10px;cursor:pointer;text-align:left;width:100%;box-shadow:var(--shadow);transition:border-color .12s}
-.row:hover{border-color:var(--pri)}
-.thumb{width:64px;height:64px;border-radius:9px;object-fit:cover;background:var(--bg)}
-div.thumb{display:grid;place-items:center;color:var(--muted);font-size:11px;text-align:center;line-height:1.2}
-.rtop{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-.rtop strong{font-size:15px;font-weight:700}
-.rsum{margin:3px 0 5px;color:var(--ink2);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.meta{display:flex;gap:10px;flex-wrap:wrap;align-items:center;font-size:13px;color:var(--muted)}
-.meta .sep::before{content:"·";margin-right:10px}
-.lastnote{font-size:12.5px;color:var(--muted);margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.lastnote b{color:var(--ink2);font-weight:600}
-.side{display:grid;gap:6px;justify-items:end;text-align:right}
-.side .date{font-size:13px;color:var(--muted)}
-@media (max-width:600px){.row{grid-template-columns:52px minmax(0,1fr)}.thumb{width:52px;height:52px}.side{grid-column:1/-1;display:flex;justify-content:space-between;align-items:center}}
-.empty-state{background:var(--surface);border:1px dashed var(--line2);border-radius:14px;padding:44px 24px;text-align:center;color:var(--muted);display:grid;gap:8px;justify-items:center}
-.empty-state strong{color:var(--ink);font-size:16px}
+.row h3{margin:0;font-size:16px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-weight:800}
+.row p{margin:3px 0 6px}
+.meta{display:flex;gap:8px;flex-wrap:wrap;align-items:center;font-size:13px;color:var(--muted)}
+.row .side{text-align:right;display:grid;gap:6px;justify-items:end}
+@media (max-width:600px){.row{grid-template-columns:60px 1fr}.thumb{width:60px;height:60px}.row .side{grid-column:1/-1;justify-items:start;display:flex}}
+.empty-state{background:var(--surface);border:1px dashed var(--line);border-radius:16px;padding:40px 24px;text-align:center;color:var(--muted)}
+.empty-state strong{display:block;color:var(--ink);font-size:17px;margin-bottom:6px}
 
-/* ---- technicien ---- */
-.feed{max-width:1240px;margin:0 auto}
-.feed-top{position:sticky;top:var(--hh,60px);z-index:5;display:flex;gap:12px;align-items:center;padding:10px 14px;margin-bottom:18px;background:var(--surface);border:1px solid var(--line);border-radius:12px;flex-wrap:wrap;box-shadow:var(--shadow)}
-.seg{display:flex;background:var(--bg);padding:3px;border-radius:10px;gap:2px}
-.seg button{border:0;background:none;padding:6px 14px;border-radius:8px;font-weight:600;color:var(--muted);cursor:pointer}
-.seg button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 3px rgba(16,24,40,.12)}
-.tcard{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(320px,1fr);margin:0 0 28px;background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden;box-shadow:var(--shadow);scroll-margin-top:calc(var(--hh,60px) + 74px)}
+.feed{max-width:1300px;margin:0 auto}
+.feed-top{position:sticky;top:var(--hh,64px);z-index:5;display:flex;gap:10px;align-items:center;padding:10px 14px;margin-bottom:18px;background:var(--surface);border:1px solid var(--line);border-radius:14px;flex-wrap:wrap;box-shadow:var(--shadow)}
+.tcard{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(300px,1fr);margin:0 0 36px;background:var(--surface);border:1px solid var(--line);border-radius:18px;overflow:hidden;box-shadow:var(--shadow);scroll-margin-top:calc(var(--hh,64px) + 70px)}
 @media (max-width:900px){.tcard{grid-template-columns:1fr}}
-.tphoto{background:#EEF1F4;position:relative;display:flex;flex-direction:column;border-right:1px solid var(--line)}
-.tphoto .big{flex:1;min-height:min(60vh,580px);display:grid;place-items:center;overflow:hidden;cursor:zoom-in}
-@media (max-width:900px){.tphoto .big{min-height:44vh}.tphoto{border-right:0;border-bottom:1px solid var(--line)}}
+.tphoto{background:#0B1215;position:relative;display:flex;flex-direction:column}
+.tphoto .big{height:min(62vh,620px);display:grid;place-items:center;overflow:hidden;cursor:zoom-in}
+@media (max-width:900px){.tphoto .big{height:48vh}}
 .tphoto .big img{width:100%;height:100%;object-fit:contain}
-.noimg{color:var(--muted);padding:40px;text-align:center}
-.tstrip{display:flex;gap:6px;padding:8px;overflow-x:auto;background:var(--surface);border-top:1px solid var(--line)}
-.tstrip img{width:56px;height:56px;object-fit:cover;border-radius:8px;opacity:.6;cursor:pointer;border:2px solid transparent;flex:none}
-.tstrip img.on{opacity:1;border-color:var(--pri)}
-.tcounter{position:absolute;top:12px;left:12px;background:rgba(255,255,255,.92);color:var(--ink);font-size:12.5px;font-weight:600;padding:3px 10px;border-radius:99px;z-index:1;box-shadow:var(--shadow)}
-.tinfo{padding:22px;display:flex;flex-direction:column;gap:16px}
-.tnum{font-size:12.5px;font-weight:600;color:var(--muted)}
-.who{font-size:22px;font-weight:700;line-height:1.2;margin:2px 0 0}
-.sum{font-size:16px;font-weight:600;line-height:1.45;margin:0;padding:12px 14px;border-left:3px solid var(--red);background:#FFF6F5;border-radius:0 10px 10px 0;color:var(--ink)}
-.tstep>label{display:flex;align-items:center;gap:8px;font-weight:600;font-size:13.5px;margin-bottom:7px}
-.tstep>label .num{width:22px;height:22px;font-size:12px}
-.tstep>label small{font-weight:400;color:var(--muted)}
+.tnum{display:inline-block;background:var(--ink);color:var(--surface);border-radius:99px;padding:2px 12px;font-size:13px;font-weight:800;margin-bottom:8px}
+.noimg{color:#8BA0A6;padding:40px;text-align:center}
+.tstrip{display:flex;gap:6px;padding:8px;overflow-x:auto;background:rgba(0,0,0,.35)}
+.tstrip img{width:58px;height:58px;object-fit:cover;border-radius:8px;opacity:.55;cursor:pointer;border:2px solid transparent}
+.tstrip img.on{opacity:1;border-color:var(--amber)}
+.tcounter{position:absolute;top:12px;left:12px;background:rgba(0,0,0,.55);color:#fff;font-size:13px;padding:3px 10px;border-radius:99px;z-index:1}
+.tinfo{background:var(--surface);padding:24px;display:flex;flex-direction:column;gap:14px}
+.who{font-size:27px;font-weight:800;line-height:1.1;margin:0}
+.sum{font-size:19px;font-weight:700;line-height:1.35;margin:0;padding:12px 14px;border-left:4px solid var(--litige);background:var(--litige-soft);border-radius:0 12px 12px 0}
 .tipos{display:flex;flex-wrap:wrap;gap:6px}
-.tipo{border:1px solid var(--line2);background:var(--surface);border-radius:9px;padding:6px 11px;cursor:pointer;font-weight:600;font-size:13.5px;display:flex;align-items:center;gap:6px}
-.tipo:hover{border-color:var(--muted)}
-.tipo[aria-pressed="true"]{border-color:var(--pri);background:var(--pri-soft);color:var(--pri);box-shadow:0 0 0 1px var(--pri) inset}
-.diag{font-size:15.5px;padding:11px 12px;border:1.5px solid var(--pri);border-radius:10px;width:100%;background:var(--surface)}
-.diag:focus{outline:3px solid var(--pri-soft);outline-offset:0}
-.tactions{display:flex;gap:8px;flex-wrap:wrap;margin-top:auto;padding-top:4px}
-.donebox{background:var(--ok-soft);color:var(--ok);border-radius:10px;padding:8px 12px;font-size:13.5px;font-weight:600}
+.tipo{border:1.5px solid var(--line);background:var(--surface);border-radius:10px;padding:7px 11px;cursor:pointer;font-weight:700;font-size:14px;display:flex;align-items:center;gap:6px}
+.tipo .dot{width:10px;height:10px;border-radius:50%}
+.tipo[aria-pressed="true"]{border-color:var(--ink);background:var(--ink);color:var(--surface)}
+.diag{font-size:17px;padding:12px;border:2px solid var(--glass);border-radius:12px;width:100%;background:var(--surface)}
+.tactions{display:flex;gap:8px;flex-wrap:wrap;margin-top:auto}
+.hint{font-size:13px;color:var(--muted)}
 
-/* ---- statistiques ---- */
-.statbar{display:flex;gap:12px;flex-wrap:wrap;align-items:end;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:14px}
-.statbar .f{min-width:150px}
-.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-bottom:16px}
-.kpi{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;box-shadow:var(--shadow)}
-.kpi b{display:block;font-size:26px;font-weight:700;line-height:1.15}
+.statbar{display:flex;gap:10px;flex-wrap:wrap;align-items:end}
+.statbar .f{min-width:140px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin:14px 0 20px}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px}
+.kpi b{display:block;font-size:30px;font-weight:800;line-height:1.1}
 .kpi span{color:var(--muted);font-size:13px}
-.kpi.warn b{color:var(--amber)}
-.panel{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin-bottom:16px;box-shadow:var(--shadow)}
-.panel h2{margin:0 0 4px;font-size:16px;font-weight:700}
-.panel .sub{margin:0 0 14px}
-.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
-.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
-@media (max-width:640px){.grid2,.grid3{grid-template-columns:1fr}}
-.sup{border-color:var(--pri);background:linear-gradient(180deg,var(--pri-soft),var(--surface) 70px)}
-.sup-steps{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
-@media (max-width:860px){.sup-steps{grid-template-columns:1fr}}
-.sup-steps li{display:flex;gap:10px;align-items:flex-start}
-.sup-steps li>div{display:grid;gap:8px;justify-items:start}
-.sup-steps strong{font-size:14px}
-.chk{display:flex;gap:8px;align-items:center;font-size:13.5px;cursor:pointer}
-.chk input{width:16px;height:16px;accent-color:var(--pri)}
-.supcount{font-size:13px;font-weight:600;color:var(--pri)}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:16px}
+.panel h2{margin:0 0 12px;font-size:17px;font-weight:800}
 .tablewrap{overflow-x:auto}
 table{border-collapse:collapse;width:100%;font-size:14px}
-th,td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap}
-tr:last-child td{border-bottom:0}
-th{font-weight:600;color:var(--muted);font-size:12.5px;text-transform:uppercase;letter-spacing:.03em}
-td.n,th.n{text-align:right}
-.bar{display:flex;height:10px;border-radius:5px;overflow:hidden;background:var(--bg);min-width:40px}
+th,td{padding:7px 10px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap}
+th{font-weight:700;color:var(--muted);font-size:13px}
+.num{text-align:right}
+.bar{display:flex;height:12px;border-radius:6px;overflow:hidden;background:var(--paper)}
 .bar i{display:block;height:100%}
-.hbar{height:8px;border-radius:4px;background:var(--pri);opacity:.75}
 .legend{display:flex;gap:14px;flex-wrap:wrap;font-size:13px;color:var(--muted);margin-bottom:10px}
-.legend span{display:flex;align-items:center;gap:6px}
+.legend span{display:flex;align-items:center;gap:5px}
 .legend i{width:10px;height:10px;border-radius:3px;display:inline-block}
-.okmsg{background:var(--ok-soft);color:var(--ok);padding:10px 12px;border-radius:10px;font-size:14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:14px;font-weight:500}
+.note{font-size:13px;color:var(--muted)}
+.okmsg{background:var(--ok-soft);color:var(--ok);padding:10px 12px;border-radius:12px;font-size:14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:12px}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+@media (max-width:560px){.grid2,.grid3{grid-template-columns:1fr}}
 
-/* ---- fiche dossier (panneau latéral) ---- */
-.scrim{position:fixed;inset:0;background:rgba(16,24,40,.35);z-index:40}
-.drawer{position:fixed;top:0;right:0;bottom:0;width:min(1060px,100%);background:var(--bg);z-index:41;overflow-y:auto;box-shadow:var(--shadow-lg)}
-.dhead{position:sticky;top:0;background:var(--surface);border-bottom:1px solid var(--line);padding:14px 22px;display:flex;gap:14px;align-items:center;z-index:2;flex-wrap:wrap}
-.dtitle{flex:1;min-width:200px}
-.dtitle h2{margin:0 0 4px;font-size:19px;font-weight:700}
-.stsel{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--muted)}
-.stsel select{width:auto;font-weight:600}
-.stepper{list-style:none;margin:0;padding:14px 22px;display:flex;gap:0;background:var(--surface);border-bottom:1px solid var(--line);overflow-x:auto}
-.stepper li{flex:1;display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);font-weight:500;min-width:120px;position:relative}
-.stepper li:not(:last-child)::after{content:"";flex:1;height:2px;background:var(--line);margin:0 10px}
-.stepper li.done:not(:last-child)::after{background:var(--pri)}
-.stepper i{font-style:normal;flex:none;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:700;border:2px solid var(--line2);background:var(--surface);color:var(--muted)}
-.stepper li.done i{background:var(--pri);border-color:var(--pri);color:#fff}
-.stepper li.cur{color:var(--ink);font-weight:700}
-.stepper li.cur i{border-color:var(--pri);color:var(--pri)}
-.stepper li.wait i{border-color:var(--red);color:var(--red)}
-.stepper li.wait{color:var(--red)}
-.dbody{padding:20px 22px 40px;display:grid;gap:16px}
-@media (max-width:600px){.dbody{padding:14px}.dhead{padding:12px 14px}.stepper{padding:12px 14px}}
-.dcols{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;align-items:start}
-.dcol{display:grid;gap:16px;align-content:start}
-@media (max-width:900px){.dcols{grid-template-columns:1fr}}
-.dsec{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;box-shadow:var(--shadow)}
-.dsec>h3,.dsec>summary{font-size:15px;margin:0 0 12px;font-weight:700;display:flex;align-items:center;gap:9px}
-.dsec>h3 .aside{margin-left:auto}
-details.dsec>summary{cursor:pointer;list-style:none;margin:0}
-details.dsec>summary::-webkit-details-marker{display:none}
-details.dsec>summary::after{content:"▾";margin-left:auto;color:var(--muted);transition:transform .15s}
-details.dsec[open]>summary{margin-bottom:12px}
-details.dsec:not([open])>summary::after{transform:rotate(-90deg)}
-details.dsec>summary small{font-weight:400;color:var(--muted);font-size:13px}
-.photos{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px;margin-top:12px}
-.photos img{aspect-ratio:1;object-fit:cover;cursor:zoom-in;width:100%;background:var(--bg)}
+.scrim{position:fixed;inset:0;background:rgba(10,18,22,.45);z-index:40}
+.scrim[hidden],.drawer[hidden],.modal[hidden],.lightbox[hidden],.toast[hidden]{display:none}
+.drawer{position:fixed;top:max(2vh,env(safe-area-inset-top,0px));bottom:2vh;left:50%;transform:translateX(-50%);width:min(1280px,96vw);border-radius:18px;background:var(--surface);z-index:41;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.3);padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+.dhead{position:sticky;top:0;background:var(--surface);border-bottom:1px solid var(--line);padding:14px 20px;display:flex;gap:10px;align-items:center;z-index:2}
+.dhead h2{margin:0;font-size:19px;flex:1;font-weight:800}
+.dbody{padding:20px;display:grid;gap:22px}
+.dcols{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:28px;align-items:start}
+.dcol{display:grid;gap:22px;align-content:start}
+@media (max-width:900px){.dcols{grid-template-columns:1fr}.drawer{top:0;bottom:0;width:100%;border-radius:0}}
+.drawer .photos{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}
+.subj{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:14px;margin-top:2px}
+.subj b{background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:2px 9px;font-weight:700}
+.row .subjl{font-size:13px;color:var(--muted);margin:0 0 4px}
+.seg{display:flex;background:var(--paper);padding:3px;border-radius:12px;gap:2px}
+.seg button{border:0;background:none;padding:6px 14px;border-radius:10px;font-weight:700;color:var(--muted);cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:var(--shadow)}
+.donebox{background:var(--ok-soft);color:var(--ok);border-radius:10px;padding:8px 12px;font-size:14px;font-weight:700}
+.dsec h3{font-size:14px;margin:0 0 8px;color:var(--muted);font-weight:700}
+.photos{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px}
+.photos img{aspect-ratio:1;object-fit:cover;border-radius:10px;cursor:zoom-in;width:100%;background:var(--glass-soft)}
 .ph{position:relative;border-radius:10px;overflow:hidden;border:2px solid transparent}
-.ph.main{border-color:var(--pri)}
-.ph .tag{position:absolute;top:6px;left:6px;background:var(--pri);color:#fff;font-size:11px;font-weight:700;padding:1px 7px;border-radius:99px}
-.ph .bar2{position:absolute;left:0;right:0;bottom:0;display:flex;gap:4px;justify-content:space-between;padding:5px;background:linear-gradient(transparent,rgba(0,0,0,.6));opacity:0;transition:opacity .15s}
-.ph:hover .bar2,.ph:focus-within .bar2{opacity:1}
-@media (hover:none){.ph .bar2{opacity:1}}
-.ph .bar2 button{border:0;border-radius:7px;padding:3px 7px;font-size:12px;font-weight:600;cursor:pointer;background:rgba(255,255,255,.95);color:var(--ink)}
-.ph .bar2 button.del{background:var(--red);color:#fff}
-.subj{font-size:13px;color:var(--muted);margin-top:8px;display:flex;gap:6px;align-items:center;flex-wrap:wrap}
-.subj b{color:var(--ink2);font-weight:600}
-.orig{white-space:pre-wrap;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:14px;font-size:14px;line-height:1.55;max-height:60vh;overflow:auto;margin:8px 0 0;font-family:var(--f)}
-.diagbox{border-left:3px solid var(--pri);background:var(--pri-soft);padding:12px 14px;border-radius:0 10px 10px 0;display:grid;gap:6px}
-.diagbox .d{font-size:15px;font-weight:600}
-.alert{background:var(--amber-soft);border-radius:10px;padding:10px 12px;font-size:13.5px;color:#7A2E0E;margin-top:10px}
-.alert b{font-weight:700}
-.alert.red{background:var(--red-soft);color:#7A271A}
-.tlist{list-style:none;margin:12px 0 0;padding:0;display:grid;gap:4px}
-.tlist li{display:grid;grid-template-columns:108px 1fr;gap:10px;font-size:13.5px;padding:6px 10px;border-radius:8px}
-.tlist time{font-size:12px;color:var(--muted)}
-.tlist li.sys{color:var(--muted);font-size:13px}
-.tlist li.note{background:var(--pri-soft);font-weight:500}
-.tlist li.mail{background:var(--amber-soft);font-weight:500}
-.tlist li.lu{color:var(--muted);font-size:12px;padding:2px 10px}
+.ph.main{border-color:var(--amber)}
+.ph .tag{position:absolute;top:6px;left:6px;background:var(--amber);color:#fff;font-size:11.5px;font-weight:800;padding:1px 8px;border-radius:99px}
+.ph .bar2{position:absolute;left:0;right:0;bottom:0;display:flex;gap:4px;justify-content:space-between;padding:5px;background:linear-gradient(transparent,rgba(0,0,0,.7))}
+.ph .bar2 button{border:0;border-radius:8px;padding:4px 8px;font-size:12.5px;font-weight:800;cursor:pointer;background:rgba(255,255,255,.92);color:#18262C}
+.ph .bar2 button.del{background:var(--litige);color:#fff}
+.ph .bar2 button:disabled{opacity:.5}
+.orig{white-space:pre-wrap;background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:16px;font-size:14.5px;line-height:1.55;min-height:260px;max-height:75vh;overflow:auto;resize:vertical;margin:0;font-family:var(--f)}
+.ohead{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.ohead h3{margin:0!important}
+.diagbox{border-left:4px solid var(--glass);background:var(--glass-soft);padding:12px 14px;border-radius:0 12px 12px 0}
+.diagbox p{margin:2px 0}
+.hist{font-size:13px;color:var(--muted);margin:0;padding-left:16px}
+.tl{list-style:none;margin:10px 0 0;padding:0;display:grid;gap:6px}
+.tl li{display:grid;grid-template-columns:118px 1fr;gap:10px;font-size:14px;padding:6px 10px;border-radius:10px}
+.tl time{font-size:12.5px;color:var(--muted)}
+.tl li.sys{color:var(--muted);font-size:13px}
+.tl li.note{background:var(--glass-soft);font-weight:700}
+.tl li.mail{background:var(--amber-soft);font-weight:700}
+.tl li.lu{color:var(--muted);font-size:12.5px;padding:2px 10px}
 .quick{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
-.quick button{border:1px solid var(--line2);background:var(--surface);border-radius:99px;padding:3px 10px;font-size:12.5px;cursor:pointer;font-weight:500;color:var(--ink2)}
-.quick button:hover{border-color:var(--pri);color:var(--pri)}
-.infos{display:flex;gap:8px 16px;align-items:center;flex-wrap:wrap;font-size:13px;color:var(--muted)}
-.infos code{background:var(--surface);border:1px solid var(--line);padding:2px 8px;border-radius:6px;color:var(--ink);font-weight:600}
-.actrow{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;align-items:center}
-.aistate{font-size:13.5px;color:var(--muted);display:flex;gap:8px;align-items:center}
+.quick button{border:1px solid var(--line);background:var(--surface);border-radius:99px;padding:3px 10px;font-size:13px;cursor:pointer;font-weight:600}
+.quick button:hover{border-color:var(--glass)}
+.chip.svc{font-size:11.5px;padding:0 7px;background:transparent;color:var(--muted)}
+.chip.new{background:var(--amber);border-color:transparent;color:#fff;font-weight:800}
+.idbox{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:13px;color:var(--muted)}
+.idbox code{background:var(--paper);border:1px solid var(--line);padding:2px 8px;border-radius:8px;color:var(--ink);font-weight:700}
+.falta{background:var(--amber-soft);border-radius:12px;padding:10px 12px;font-size:14px}
+.falta b{color:var(--amber)}
 
-/* ---- formulaires ---- */
-.form{display:grid;gap:14px}
-.fg{border:0;margin:0;padding:0;display:grid;gap:10px;min-width:0}
-.fg legend{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;padding:0;margin-bottom:8px}
-
-/* ---- fenêtres ---- */
-.modal{position:fixed;inset:0;z-index:50;display:grid;place-items:center;padding:16px;overflow-y:auto;background:rgba(16,24,40,.4)}
-.mbox{background:var(--surface);border-radius:16px;width:min(1040px,100%);max-height:calc(100vh - 32px);overflow:auto;box-shadow:var(--shadow-lg)}
-.mbox.sm{width:min(500px,100%)}
+.modal{position:fixed;inset:0;z-index:50;display:grid;place-items:center;padding:16px;overflow-y:auto;background:rgba(10,18,22,.45)}
+.mbox{background:var(--surface);border-radius:18px;width:min(980px,100%);max-height:calc(100vh - 32px);overflow:auto;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.mbox.sm{width:min(520px,100%)}
 .mhead{display:flex;align-items:center;gap:10px;padding:14px 20px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--surface);z-index:2}
-.mhead h2{margin:0;font-size:18px;flex:1;font-weight:700}
+.mhead h2{margin:0;font-size:19px;flex:1;font-weight:800}
 .mbody{padding:20px;display:grid;gap:16px}
 .mfoot{display:flex;gap:8px;justify-content:flex-end;padding:14px 20px;border-top:1px solid var(--line);position:sticky;bottom:0;background:var(--surface)}
-.newgrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:24px}
-@media (max-width:820px){.newgrid{grid-template-columns:1fr}}
-.ncol{display:grid;gap:12px;align-content:start}
-.nstep{display:flex;gap:10px;align-items:center;font-weight:600;font-size:14.5px}
-.drop{border:2px dashed var(--line2);border-radius:12px;padding:18px;text-align:center;color:var(--muted);cursor:pointer;font-size:13.5px;background:#FAFBFC}
-.drop:hover,.drop.over{border-color:var(--pri);background:var(--pri-soft);color:var(--pri)}
-.pending{display:grid;grid-template-columns:repeat(auto-fill,minmax(72px,1fr));gap:6px}
-.pending:empty{display:none}
+.newgrid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media (max-width:800px){.newgrid{grid-template-columns:1fr}}
+.drop{border:2px dashed var(--line);border-radius:14px;padding:16px;text-align:center;color:var(--muted);cursor:pointer;font-size:14px}
+.drop.over{border-color:var(--glass);background:var(--glass-soft)}
+.pending{display:grid;grid-template-columns:repeat(auto-fill,minmax(80px,1fr));gap:6px;margin-top:8px}
 .pending .pi{position:relative}
 .pending img,.pending .pdf{aspect-ratio:1;object-fit:cover;border-radius:8px;width:100%}
-.pending .pdf{display:grid;place-items:center;background:var(--red-soft);color:var(--red);font-weight:700}
+.pending .pdf{display:grid;place-items:center;background:var(--litige-soft);color:var(--litige);font-weight:800}
 .pending button{position:absolute;top:3px;right:3px;border:0;background:rgba(0,0,0,.6);color:#fff;border-radius:50%;width:22px;height:22px;cursor:pointer;line-height:1}
-.login{position:fixed;inset:0;z-index:80;background:var(--bg);display:grid;place-items:center;padding:20px}
+.aistate{font-size:14px;color:var(--muted);display:flex;gap:8px;align-items:center}
+.login{position:fixed;inset:0;z-index:80;background:var(--paper);display:grid;place-items:center;padding:20px}
+.login[hidden]{display:none}
 .login .mbox{padding:28px;display:grid;gap:14px}
-/* ---- visionneuse photo avec zoom ---- */
-.lightbox{position:fixed;inset:0;background:#0E1116;z-index:60;color:#fff;user-select:none}
-.lb-stage{position:absolute;inset:0;overflow:hidden;touch-action:none;cursor:grab}
-.lb-stage.drag{cursor:grabbing}
-.lb-stage img{position:absolute;left:0;top:0;transform-origin:0 0;max-width:none;will-change:transform;-webkit-user-drag:none}
-.lb-stage img.px{image-rendering:pixelated}
-.lb-top{position:absolute;top:0;left:0;right:0;display:flex;align-items:center;gap:12px;padding:10px 14px;background:linear-gradient(rgba(0,0,0,.6),transparent);font-size:13.5px;pointer-events:none}
-.lb-top>*{pointer-events:auto}
-.lb-hint{color:#C0C7D0;flex:1;text-align:center}
-@media (max-width:700px){.lb-hint{display:none}.lb-top .spacer{display:block}}
-.lb-q{background:rgba(255,255,255,.14);border-radius:99px;padding:2px 9px;font-size:12px;font-weight:600}
-.lb-q.hd{background:var(--ok);}
-.lb-btn{border:0;background:rgba(255,255,255,.14);color:#fff;border-radius:10px;min-width:40px;height:40px;padding:0 12px;font-size:16px;font-weight:600;cursor:pointer;backdrop-filter:blur(6px)}
-.lb-btn:hover{background:rgba(255,255,255,.26)}
-.lb-btn:disabled{opacity:.3;cursor:default}
-.lb-nav{position:absolute;top:50%;transform:translateY(-50%);font-size:26px;height:56px;min-width:44px}
-.lb-nav.prev{left:12px}.lb-nav.next{right:12px}
-.lb-tools{position:absolute;bottom:calc(16px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);display:flex;gap:6px;align-items:center;background:rgba(0,0,0,.55);padding:6px;border-radius:14px;backdrop-filter:blur(6px)}
-.lb-zoom{min-width:64px;text-align:center;font-weight:600;font-size:13.5px}
-.lb-tools input[type=range]{width:min(220px,30vw);accent-color:#fff}
-.toast{position:fixed;bottom:calc(20px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 16px;border-radius:10px;z-index:90;font-size:14px;box-shadow:var(--shadow-lg);max-width:calc(100vw - 32px)}
-.spin{width:14px;height:14px;border:2px solid var(--line);border-top-color:var(--pri);border-radius:50%;animation:sp .8s linear infinite;display:inline-block}
+.lightbox{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:60;display:grid;place-items:center;cursor:zoom-out}
+.lightbox img{max-width:96vw;max-height:94vh;object-fit:contain}
+.toast{position:fixed;bottom:calc(20px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);background:var(--ink);color:var(--surface);padding:10px 16px;border-radius:12px;z-index:90;font-size:14px}
+.spin{width:14px;height:14px;border:2px solid var(--line);border-top-color:var(--glass);border-radius:50%;animation:sp .8s linear infinite;display:inline-block}
 @keyframes sp{to{transform:rotate(360deg)}}
 @media (prefers-reduced-motion:reduce){.spin{animation:none}}
 </style>
@@ -356,106 +224,77 @@ details.dsec>summary small{font-weight:400;color:var(--muted);font-size:13px}
 
 <div class="login" id="login">
   <div class="mbox sm">
-    <div class="brand"><span class="logo">🪟</span>Litiges <small>Reflectiv</small></div>
+    <div class="brand">Litiges <span>Reflectiv export</span></div>
     <div class="field" id="url-field"><label for="l-url" data-t="apiUrl"></label><input class="inp" id="l-url" placeholder="https://script.google.com/macros/s/…/exec"></div>
     <div class="field"><label for="l-pin" data-t="pin"></label><input class="inp" id="l-pin" type="password" inputmode="numeric" autocomplete="current-password"></div>
-    <button class="btn primary" id="l-go" data-t="enter" style="justify-content:center"></button>
+    <button class="btn primary" id="l-go" data-t="enter"></button>
     <span class="note" id="l-err"></span>
   </div>
 </div>
 
 <header class="top">
   <div class="top-in">
-    <div class="brand"><span class="logo">🪟</span>Litiges <small>Reflectiv</small></div>
+    <div class="brand">Litiges <span>Reflectiv export</span></div>
     <nav class="tabs" role="tablist">
       <button class="tab" role="tab" data-v="casos" aria-selected="true" data-t="tabCases"></button>
       <button class="tab" role="tab" data-v="tecnico" aria-selected="false"><span data-t="tabTech"></span><span class="n" id="n-pend" hidden>0</span></button>
       <button class="tab" role="tab" data-v="stats" aria-selected="false" data-t="tabStats"></button>
     </nav>
     <div class="spacer"></div>
-    <button class="btn sm upd" id="b-updates" hidden>● <span data-t="updates"></span></button>
+    <div class="lang" role="group" aria-label="Langue"><button data-lang="fr">FR</button><button data-lang="en">EN</button></div>
+    <button class="btn ghost sm" id="b-refresh" data-t="refresh"></button>
+    <button class="btn ghost sm" id="b-cat" data-t="catalog"></button>
     <button class="btn primary" id="b-new" data-t="newClaim"></button>
-    <details class="menu" id="menu">
-      <summary class="btn icon" aria-label="Menu" title="Menu">⋯</summary>
-      <div class="menu-pop">
-        <button id="b-refresh"><i>↻</i><span data-t="refresh"></span></button>
-        <button id="b-cat"><i>☰</i><span data-t="catalog"></span></button>
-        <button id="b-guide"><i>?</i><span data-t="guide"></span></button>
-        <div class="menu-lang"><span class="note" data-t="language"></span><div class="lang" role="group" aria-label="Langue"><button data-lang="fr">FR</button><button data-lang="en">EN</button></div></div>
-      </div>
-    </details>
   </div>
 </header>
 
 <main>
-  <!-- ===== Dossiers ===== -->
   <section class="view" id="v-casos">
-    <div class="guide" id="guide" hidden>
-      <div class="guide-h"><strong data-t="guideTitle"></strong><div class="spacer"></div><button class="btn ghost sm" id="g-close" data-t="gotIt"></button></div>
-      <ol class="steps">
-        <li><i class="num">1</i><div><strong data-t="g1t"></strong><span data-t="g1"></span></div></li>
-        <li><i class="num">2</i><div><strong data-t="g2t"></strong><span data-t="g2"></span></div></li>
-        <li><i class="num">3</i><div><strong data-t="g3t"></strong><span data-t="g3"></span></div></li>
-        <li><i class="num">4</i><div><strong data-t="g4t"></strong><span data-t="g4"></span></div></li>
-      </ol>
+    <div class="ops">
+      <aside class="filters">
+        <div><label for="f-q" data-t="search"></label><input class="inp" id="f-q"></div>
+        <div><label for="f-svc" data-t="service"></label><select class="inp" id="f-svc"></select></div>
+        <div><label for="f-cli" data-t="client"></label><select class="inp" id="f-cli"></select></div>
+        <div><label for="f-ref" data-t="ref"></label><select class="inp" id="f-ref"></select></div>
+        <div><label for="f-tipo" data-t="type"></label><select class="inp" id="f-tipo"></select></div>
+        <div><label for="f-est" data-t="status"></label><select class="inp" id="f-est"></select></div>
+        <div><label for="f-d1" data-t="from"></label><input type="date" class="inp" id="f-d1"></div>
+        <div><label for="f-d2" data-t="to"></label><input type="date" class="inp" id="f-d2"></div>
+        <button class="btn sm" id="f-clear" data-t="clear"></button>
+      </aside>
+      <div>
+        <div class="listhead"><h1 data-t="tabCases"></h1><span class="count" id="count"></span><div class="spacer"></div>
+          <select class="inp" id="f-sort" style="width:auto"></select>
+          <button class="btn sm" id="b-exp-all" data-t="exportList"></button></div>
+        <div class="rows" id="rows"></div>
+      </div>
     </div>
-
-    <div class="pagehead"><h1 data-t="tabCases"></h1><span class="count" id="count"></span><div class="spacer"></div>
-      <select class="inp auto" id="f-sort" aria-label="Tri"></select>
-      <button class="btn sm" id="b-exp-all">⤓ <span data-t="exportList"></span></button></div>
-
-    <div class="stpills" id="stpills" role="group"></div>
-    <div class="toolbar">
-      <div class="search"><input class="inp" id="f-q" type="search" aria-label="Rechercher"></div>
-      <button class="btn" id="b-filters" aria-expanded="false"><span data-t="moreFilters"></span><span class="badge" id="nfil" hidden></span></button>
-    </div>
-    <div class="filters" id="filters" hidden>
-      <div class="field"><label for="f-cli" data-t="client"></label><select class="inp" id="f-cli"></select></div>
-      <div class="field"><label for="f-ref" data-t="ref"></label><select class="inp" id="f-ref"></select></div>
-      <div class="field"><label for="f-tipo" data-t="cause"></label><select class="inp" id="f-tipo"></select></div>
-      <div class="field"><label for="f-d1" data-t="from"></label><input type="date" class="inp" id="f-d1"></div>
-      <div class="field"><label for="f-d2" data-t="to"></label><input type="date" class="inp" id="f-d2"></div>
-      <button class="btn ghost sm" id="f-clear" data-t="clear"></button>
-    </div>
-    <div class="rows" id="rows"></div>
   </section>
 
-  <!-- ===== Technicien ===== -->
   <section class="view" id="v-tecnico" hidden>
-    <div class="feed">
+    <div class="feed" id="feed">
       <div class="feed-top"><div class="seg"><button id="tm-todo" aria-pressed="true" data-t="techTodo"></button><button id="tm-done" aria-pressed="false" data-t="techDone"></button></div><strong id="feed-title"></strong><div class="spacer"></div><span class="hint" data-t="techHint"></span></div>
       <div id="feed-cards"></div>
     </div>
   </section>
 
-  <!-- ===== Statistiques ===== -->
   <section class="view" id="v-stats" hidden>
-    <div class="pagehead"><h1 data-t="tabStats"></h1></div>
     <div class="statbar">
-      <strong style="padding-bottom:8px" data-t="period"></strong>
-      <div class="f"><label class="flabel" for="s-d1" data-t="from"></label><input type="date" class="inp" id="s-d1"></div>
-      <div class="f"><label class="flabel" for="s-d2" data-t="to"></label><input type="date" class="inp" id="s-d2"></div>
-      <span class="note" style="padding-bottom:9px" data-t="periodHint"></span>
+      <div class="f"><label class="note" for="s-d1" data-t="from"></label><input type="date" class="inp" id="s-d1"></div>
+      <div class="f"><label class="note" for="s-d2" data-t="to"></label><input type="date" class="inp" id="s-d2"></div>
+      <label class="note" style="display:flex;gap:6px;align-items:center;padding-bottom:8px"><input type="checkbox" id="s-imp"><span data-t="onlySupplier"></span></label>
+      <div class="f"><label class="note" for="s-svc" data-t="service"></label><select class="inp" id="s-svc"></select></div>
+      <label class="note" style="display:flex;gap:6px;align-items:center;padding-bottom:8px"><input type="checkbox" id="s-nosent"><span data-t="onlyNotSent"></span></label>
+      <div class="spacer"></div>
+      <button class="btn" id="b-prov-xlsx" data-t="supXlsx"></button>
+      <button class="btn" id="b-prov-zip" data-t="supZip"></button>
     </div>
+    <div id="sent-zone"></div>
     <div class="kpis" id="kpis"></div>
-
-    <div class="panel sup">
-      <h2 data-t="supTitle"></h2><p class="note sub" data-t="supHint"></p>
-      <ol class="sup-steps">
-        <li><i class="num">1</i><div><strong data-t="sup1"></strong>
-          <label class="chk"><input type="checkbox" id="s-imp" checked><span data-t="onlySupplier"></span></label>
-          <label class="chk"><input type="checkbox" id="s-nosent" checked><span data-t="onlyNotSent"></span></label>
-          <span class="supcount" id="sup-count"></span></div></li>
-        <li><i class="num">2</i><div><strong data-t="sup2"></strong><button class="btn" id="b-prov-xlsx">⤓ <span data-t="supXlsx"></span></button></div></li>
-        <li><i class="num">3</i><div><strong data-t="sup3"></strong><button class="btn" id="b-prov-zip">⤓ <span data-t="supZip"></span></button></div></li>
-      </ol>
-      <div id="sent-zone"></div>
-    </div>
-
-    <div class="panel"><h2 data-t="byRef"></h2><p class="note sub" data-t="byRefHint"></p><div class="legend" id="legend"></div><div class="tablewrap"><table id="t-ref"></table></div></div>
+    <div class="panel"><h2 data-t="byRef"></h2><div class="legend" id="legend"></div><div class="tablewrap"><table id="t-ref"></table></div></div>
     <div class="grid2" style="gap:16px">
-      <div class="panel"><h2 data-t="bySymptom"></h2><p class="note sub" data-t="bySymptomHint"></p><div class="tablewrap"><table id="t-sint"></table></div></div>
-      <div class="panel"><h2 data-t="repeat"></h2><p class="note sub" data-t="repeatHint"></p><div class="tablewrap"><table id="t-cli"></table></div></div>
+      <div class="panel"><h2 data-t="bySymptom"></h2><div class="tablewrap"><table id="t-sint"></table></div></div>
+      <div class="panel"><h2 data-t="repeat"></h2><div class="tablewrap"><table id="t-cli"></table></div></div>
     </div>
     <div class="panel"><h2 data-t="byMonth"></h2><div class="tablewrap"><table id="t-mes"></table></div></div>
   </section>
@@ -466,21 +305,16 @@ details.dsec>summary small{font-weight:400;color:var(--muted);font-size:13px}
 
 <div class="modal" id="m-new" hidden>
   <div class="mbox">
-    <div class="mhead"><h2 data-t="newTitle"></h2><button class="btn icon ghost" data-close aria-label="Fermer">✕</button></div>
+    <div class="mhead"><h2 data-t="newTitle"></h2><button class="btn ghost" data-close data-t="close"></button></div>
     <div class="mbody"><div class="newgrid">
-      <div class="ncol">
-        <div class="nstep"><i class="num">1</i><span data-t="n1"></span></div>
-        <textarea class="inp" id="n-text" style="min-height:200px" aria-label="Mail"></textarea>
-        <div class="drop" id="drop" tabindex="0"><span data-t="dropHint"></span><input type="file" id="n-files" accept="image/*,application/pdf" multiple hidden></div>
-        <div class="pending" id="pending"></div>
-        <div class="nstep" style="margin-top:6px"><i class="num">2</i><span data-t="n2"></span></div>
-        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><button class="btn primary" id="b-ai">✨ <span data-t="fillAI"></span></button><span class="aistate" id="ai-state"></span></div>
+      <div style="display:grid;gap:12px;align-content:start">
+        <div class="field"><label for="n-text" data-t="pasteMail"></label><textarea class="inp" id="n-text" style="min-height:220px"></textarea></div>
+        <div><div class="drop" id="drop" tabindex="0"><span data-t="dropHint"></span><input type="file" id="n-files" accept="image/*,application/pdf" multiple hidden></div>
+          <div class="pending" id="pending"></div></div>
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><button class="btn primary" id="b-ai" data-t="fillAI"></button><span class="aistate" id="ai-state"></span></div>
         <div id="ai-falta"></div>
       </div>
-      <div class="ncol">
-        <div class="nstep"><i class="num">3</i><span data-t="n3"></span></div>
-        <div class="form" id="n-form"></div>
-      </div>
+      <div style="display:grid;gap:10px;align-content:start" id="n-form"></div>
     </div></div>
     <div class="mfoot"><button class="btn" data-close data-t="cancel"></button><button class="btn primary" id="b-save-new" data-t="save"></button></div>
   </div>
@@ -488,165 +322,89 @@ details.dsec>summary small{font-weight:400;color:var(--muted);font-size:13px}
 
 <div class="modal" id="m-cat" hidden>
   <div class="mbox sm">
-    <div class="mhead"><h2 data-t="catalog"></h2><button class="btn icon ghost" data-close aria-label="Fermer">✕</button></div>
+    <div class="mhead"><h2 data-t="catalog"></h2><button class="btn ghost" data-close data-t="close"></button></div>
     <div class="mbody"><p class="note" style="margin:0" data-t="catHint"></p><textarea class="inp" id="cat-text" style="min-height:260px"></textarea></div>
-    <div class="mfoot"><button class="btn" data-close data-t="cancel"></button><button class="btn primary" id="b-save-cat" data-t="save"></button></div>
+    <div class="mfoot"><button class="btn primary" id="b-save-cat" data-t="save"></button></div>
   </div>
 </div>
 
-<div class="modal" id="m-form" hidden>
-  <div class="mbox" style="width:min(720px,100%)">
-    <div class="mhead"><h2 data-t="fmModalT"></h2><button class="btn icon ghost" data-close aria-label="Fermer">✕</button></div>
-    <div class="mbody">
-      <div class="grid2"><div class="field"><label for="mf-lang" data-t="fmLang"></label><select class="inp" id="mf-lang"></select></div>
-        <div class="field"><label for="mf-to" data-t="fmTo"></label><input class="inp" id="mf-to" type="email"></div></div>
-      <div class="field"><label for="mf-subj" data-t="subject"></label><input class="inp" id="mf-subj"></div>
-      <textarea class="inp msgbox" id="mf-msg" aria-label="Message"></textarea>
-      <p class="note" style="margin:0" data-t="fmHint"></p>
-      <span class="aistate" id="mf-st"></span>
-    </div>
-    <div class="mfoot"><button class="btn" id="mf-copy" data-t="fmCopyMsg"></button><button class="btn primary" id="mf-mail" data-t="fmMail"></button></div>
-  </div>
-</div>
-
-<div class="lightbox" id="lb" hidden role="dialog" aria-modal="true">
-  <div class="lb-stage" id="lb-stage"><img id="lb-img" alt="" draggable="false"></div>
-  <div class="lb-top"><span id="lb-count"></span><span class="lb-q" id="lb-q"></span><span class="lb-hint" data-t="zoomHint"></span><span class="spacer" hidden></span><button class="lb-btn" id="lb-close" aria-label="Fermer">✕</button></div>
-  <button class="lb-btn lb-nav prev" id="lb-prev" aria-label="Précédente">‹</button>
-  <button class="lb-btn lb-nav next" id="lb-next" aria-label="Suivante">›</button>
-  <div class="lb-tools">
-    <button class="lb-btn" id="lb-out" aria-label="Zoom −">−</button>
-    <input type="range" id="lb-range" min="0" max="1000" value="0" aria-label="Zoom">
-    <button class="lb-btn" id="lb-in" aria-label="Zoom +">+</button>
-    <span class="lb-zoom" id="lb-zoom">100 %</span>
-    <button class="lb-btn" id="lb-fit" data-t="fitT"></button>
-    <button class="lb-btn" id="lb-1" title="1:1">1:1</button>
-  </div>
-</div>
+<div class="lightbox" id="lb" hidden><img alt=""></div>
 <div class="toast" id="toast" hidden></div>
 
 <script>
 /* ============ i18n ============ */
 const I18N={
- fr:{tabCases:'Dossiers',tabTech:'Technicien',tabStats:'Statistiques',refresh:'Actualiser',catalog:'Catalogue des références',newClaim:'+ Nouveau litige',
-  zoomHint:'Molette ou pincer pour zoomer · glisser pour se déplacer · double-clic · ← → photo suivante',fitT:'Ajuster',hd:'Original HD',hdLoading:'Chargement HD…',
-  diagT:'Diagnostic',diagFree:'Pas encore de diagnostic. Écrivez-le ici, ou laissez le technicien le faire dans son onglet.',editDiag:'Modifier',saveDiag:'Enregistrer le diagnostic',
-  updates:'Nouveautés, actualiser',guide:'Comment ça marche',language:'Langue',moreFilters:'Filtres',
-  guideTitle:'Comment ça marche, en 4 étapes',gotIt:'J’ai compris, masquer',
-  g1t:'Enregistrer',g1:'Le mail arrive (ou « + Nouveau litige »), puis « Demander le formulaire » : le client complète tout en ligne, avec les photos.',
-  fmT:'Formulaire client',fmNone:'Demandez au client de compléter le formulaire en ligne : questions adaptées au type de problème, photos obligatoires, conditions de garantie. Il peut l’enregistrer et le finir plus tard.',
-  fmAsk:'📨 Demander le formulaire',fmResend:'📨 Renvoyer le message',fmCopyLink:'Copier le lien',fmOpen:'Voir le formulaire ↗',
-  fmS_cree:'Lien créé',fmS_ouvert:'Ouvert par le client',fmS_brouillon:'En cours de saisie',fmS_soumis:'Formulaire reçu',fmSent:'Envoyé au client',
-  fmChip_cree:'📨 Formulaire envoyé',fmChip_ouvert:'👁 Formulaire ouvert',fmChip_brouillon:'✎ Formulaire en cours',fmChip_soumis:'✓ Formulaire reçu',
-  fmAnswers:'Réponses du client',fmPhotos:'Photos du formulaire',fmModalT:'Demander le formulaire au client',fmLang:'Langue du message',fmTo:'À',
-  fmCopyMsg:'📋 Copier le message',fmMail:'✉ Ouvrir dans ma messagerie',fmMarked:'Dossier marqué « Formulaire envoyé »',fmNotReady:'Le serveur n’a pas encore la fonction formulaire (voir INSTALL.md).',
-  fmHint:'Copiez le message ou ouvrez votre messagerie : le dossier passe en « Formulaire envoyé ». Gardez la référence du dossier dans l’objet : les réponses du client seront rattachées automatiquement.',
-  editData:'✎ Modifier',noContact:'Contact manquant',noEmail:'Email manquant',emailSaved:'Email du dossier mis à jour',
-  stRecu:'Reçu',stForm:'Formulaire',stDiag:'Diagnostic',stRep:'Réponse',stClos:'Clôturé',stSkip:'facultatif',
-  g2t:'Diagnostiquer',g2:'Le technicien choisit la cause dans son onglet, ou vous l’écrivez dans le dossier.',
-  g3t:'Répondre',g3:'Ouvrez le dossier : l’IA propose une réponse à copier dans votre mail.',
-  g4t:'Fournisseur',g4:'Onglet Statistiques : Excel + photos à envoyer au fournisseur.',
-  search:'Rechercher',client:'Client',ref:'Référence',type:'Type',status:'Statut',from:'Du',to:'Au',clear:'Effacer',exportList:'Excel',
-  all:'Tous',allF:'Toutes',of:'sur',noCases:'Aucun litige pour le moment',noCasesHint:'Cliquez sur « + Nouveau litige » ou transférez le mail vers la boîte Gmail avec le libellé Litiges.',
+ fr:{tabCases:'Dossiers',tabTech:'Technicien',tabStats:'Statistiques et fournisseur',refresh:'Actualiser',catalog:'Catalogue',newClaim:'+ Nouveau litige',
+  search:'Rechercher',client:'Client',ref:'Référence',type:'Type',status:'Statut',from:'Du',to:'Au',clear:'Effacer les filtres',exportList:'Exporter la liste (Excel)',
+  all:'Tous',allF:'Toutes',of:'sur',noCases:'Aucun litige pour le moment',noCasesHint:'Cliquez sur « Nouveau litige » ou transférez le mail vers la boîte Gmail avec le libellé Litiges.',
   noMatch:'Aucun dossier avec ces filtres',noMatchHint:'Retirez un filtre pour en voir plus.',noPhoto:'Sans photo',noSummary:'Sans résumé',
   nthClaim:n=>`${n}e réclamation sur cette réf.`,rolls:n=>`${n} rouleau${n>1?'x':''}`,ofM:m=>` de ${m} m`,order:'Commande',sentSupplier:'Envoyé au fournisseur',fromMail:'Reçu par mail',
-  techHint:'Choisissez la cause, écrivez le diagnostic, puis Entrée.',pendingN:n=>`${n} dossier${n>1?'s':''} à diagnostiquer`,pendingT:'À diagnostiquer',
-  nothing:'Rien à diagnostiquer',nothingHint:'Les dossiers « À analyser » apparaissent ici.',cause:'Cause',diagLabel:'Diagnostic',diagSmall:'en une phrase',sugLabel:'Conseil pour la réponse',sugSmall:'facultatif',
-  diagPh:'Ex. : film plié pendant le transport, carton écrasé',sugPh:'Que répondre au client',
-  saveNext:'Enregistrer et suivant',askInfo:'Demander plus d’infos',details:'Ouvrir le dossier',writeDiag:'Écrivez le diagnostic',saved:'Enregistré',movedWait:'Passé en « Attente client »',
-  onlySupplier:'Seulement imputables au fournisseur',onlyNotSent:'Seulement pas encore envoyés',supXlsx:'Excel fournisseur',supZip:'Photos (ZIP)',
-  supTitle:'Envoyer au fournisseur',supHint:'Préparez en 3 clics le fichier et les photos à transmettre. La période choisie plus haut s’applique.',
-  sup1:'Choisissez les dossiers',sup2:'Téléchargez l’Excel',sup3:'Téléchargez les photos',supN:n=>`${n} dossier${n>1?'s':''} seront exportés`,
-  period:'Période',periodHint:'Vide = depuis le début',
-  byRef:'Par référence',byRefHint:'Les références les plus touchées en premier. La barre montre la répartition par cause.',bySymptom:'Par symptôme',bySymptomHint:'Ce que les clients constatent.',
-  repeat:'Clients récurrents',repeatHint:'Clients avec plus d’une réclamation.',byMonth:'Par mois',
-  kClaims:'réclamations',kRolls:'rouleaux touchés',kMeters:'mètres touchés',kSupplier:'imputables au fournisseur',kOpen:'à analyser ou en attente',
-  cases:'Dossiers',rollsH:'Rouleaux',metersH:'Mètres',byType:'Répartition',symptom:'Symptôme',month:'Mois',claims:'Réclamations',refs:'Références',noData:'Pas de données sur cette période.',noRepeat:'Aucun client avec plus d’une réclamation.',
+  techHint:'Choisissez la cause, écrivez-la en une phrase et appuyez sur Entrée.',pendingN:n=>`${n} dossier${n>1?'s':''} à diagnostiquer`,pendingT:'À diagnostiquer',
+  nothing:'Rien à diagnostiquer',nothingHint:'Les dossiers « À analyser » apparaissent ici.',cause:'Cause',diagPh:'Diagnostic en une phrase, puis Entrée',sugPh:'Que répondre au client (facultatif)',
+  saveNext:'Enregistrer et suivant',askInfo:'Demander plus d’infos',details:'Voir le détail',writeDiag:'Écrivez le diagnostic',saved:'Enregistré',movedWait:'Passé en « Attente client »',
+  onlySupplier:'Seulement imputables au fournisseur',onlyNotSent:'Seulement non envoyés',supXlsx:'Excel pour le fournisseur',supZip:'Photos pour le fournisseur (ZIP)',
+  byRef:'Par référence',bySymptom:'Par symptôme',repeat:'Clients récurrents',byMonth:'Par mois',kClaims:'réclamations',kRolls:'rouleaux touchés',kMeters:'mètres touchés',kSupplier:'imputables au fournisseur',kOpen:'sans diagnostic clos',
+  cases:'Dossiers',rollsH:'Rouleaux',metersH:'Mètres',byType:'Rouleaux par type',symptom:'Symptôme',month:'Mois',claims:'Réclamations',refs:'Références',noData:'Pas de données sur cette période.',noRepeat:'Aucun client avec plus d’une réclamation.',
   markQ:n=>`Excel téléchargé. Marquer ces ${n} dossiers comme envoyés au fournisseur aujourd’hui ?`,markYes:'Oui, marquer',no:'Non',marked:'Marqués comme envoyés',
-  newTitle:'Nouveau litige',close:'Fermer',cancel:'Annuler',save:'Enregistrer',pasteMail:'Mail du client',dropHint:'📎 Glissez photos ou PDF ici, cliquez pour choisir, ou collez une capture (Ctrl+V)',
-  n1:'Collez le mail du client et ajoutez les photos',n2:'Laissez l’IA remplir la fiche',n3:'Vérifiez la fiche, puis enregistrez',
-  gClient:'Client',gProduct:'Produit concerné',gProblem:'Problème',
-  fillAI:'Remplir avec l’IA',reading:'Lecture de la réclamation…',checkFields:'✓ Fiche remplie. Vérifiez les champs à droite puis enregistrez.',aiFail:'L’IA n’a pas répondu. Remplissez à la main ou réessayez.',
+  newTitle:'Nouveau litige',close:'Fermer',cancel:'Annuler',save:'Enregistrer',pasteMail:'Mail du client (collez-le tel quel)',dropHint:'Glissez photos ou PDF ici, cliquez pour choisir, ou collez une capture (Ctrl+V)',
+  fillAI:'Remplir avec l’IA',reading:'Lecture de la réclamation…',checkFields:'Vérifiez les champs puis enregistrez.',aiFail:'L’IA n’a pas répondu. Remplissez à la main ou réessayez.',
   needInput:'Collez le mail ou ajoutez des photos',missing:'À demander au client :',needClient:'Le client manque',saving:'Enregistrement…',savedCase:id=>'Litige enregistré : '+id,
-  contact:'Contact',email:'Email',claimDate:'Date de la réclamation',asWritten:'Réf. écrite par le client',orderInv:'Commande / facture',lot:'Lot (si connu)',rollsAff:'Rouleaux touchés',format:'Format (m)',lang:'Langue du client',
-  typeProv:'Cause probable',problem:'Le problème en une phrase',problemPh:'Ex. : 4 rouleaux marqués à l’intérieur, carton intact',resolution:'Résolution',
-  photos:'Photos et fichiers',addFiles:'+ Ajouter des fichiers',nClaimsRef:(n,r)=>`${n} réclamations de ce client sur ${r} :`,techDiag:'Diagnostic du technicien',noDiag:'Pas encore de diagnostic. Le dossier attend dans l’onglet Technicien.',goTech:'Aller à l’onglet Technicien',
-  imputable:'Imputable',sugg:'Conseil',caseData:'Fiche complète',caseDataHint:'client, produit, commande…',saveChanges:'Enregistrer les modifications',changesSaved:'Modifications enregistrées',origMail:'Mail original du client',
-  stepProblem:'Le problème',reply:l=>`Réponse au client (${l})`,replyPh:'Votre réponse. Cliquez « Brouillon IA » pour partir du diagnostic.',draftAI:'✨ Brouillon IA',copy:'Copier',copied:'Copié',saveText:'Enregistrer',textSaved:'Texte enregistré',
-  drafting:'Rédaction…',reviewDraft:'Relisez et adaptez avant d’envoyer.',otherClaims:c=>`Autres réclamations de ${c}`,date:'Date',problemH:'Problème',backup:'Sauvegarde',openDrive:'Dossier Drive ↗',history:'Historique',
+  contact:'Contact',email:'Email',claimDate:'Date de la réclamation',asWritten:'Écrite par le client',orderInv:'Commande / facture',lot:'Lot (si connu)',rollsAff:'Rouleaux touchés',format:'Format (m)',lang:'Langue du client',
+  typeProv:'Type (provisoire)',problem:'Le problème en une phrase',problemPh:'Ex. : 4 rouleaux marqués à l’intérieur, carton intact',resolution:'Résolution',
+  photos:'Photos et fichiers',addFiles:'Ajouter des fichiers',nClaimsRef:(n,r)=>`${n} réclamations de ce client sur ${r} :`,techDiag:'Diagnostic technicien',noDiag:'Pas encore de diagnostic. Le dossier apparaît dans l’onglet Technicien tant qu’il est « À analyser ».',
+  imputable:'Imputable',sugg:'Suggestion de réponse',caseData:'Données du dossier',saveChanges:'Enregistrer les modifications',changesSaved:'Modifications enregistrées',origMail:'Mail original du client',
+  reply:l=>`Réponse au client (${l})`,replyPh:'Votre réponse. Vous pouvez demander un brouillon à l’IA à partir du diagnostic.',draftAI:'Brouillon IA',copy:'Copier',copied:'Copié',saveText:'Enregistrer le texte',textSaved:'Texte enregistré',
+  drafting:'Rédaction…',reviewDraft:'Relisez et adaptez avant d’envoyer.',otherClaims:c=>`Autres réclamations de ${c}`,date:'Date',problemH:'Problème',backup:'Sauvegarde',openDrive:'Ouvrir le dossier Drive',history:'Historique',
   sentOn:d=>'Envoyé au fournisseur le '+d,catHint:'Une référence par ligne (ex. SOL 251). L’IA s’en sert pour corriger les références mal écrites.',catSaved:n=>`Catalogue enregistré (${n} références)`,
   apiUrl:'URL de l’application Apps Script',pin:'PIN',enter:'Entrer',badPin:'PIN incorrect',netErr:'Impossible de joindre le serveur',loading:'Chargement…',errSave:'Enregistrement impossible',preparing:'Préparation…',noCasesFilter:'Aucun dossier avec ces filtres',
-  pdf:'PDF',followUp:'Suivi',notePh:'Où en est le dossier ?',addNote:'Ajouter',noteAdded:'Note ajoutée',newB:'Nouveau',
-  relaunch:'✨ Relancer l’IA',relaunching:'Analyse en cours…',relaunched:'Champs complétés par l’IA',lastNote:'Dernier suivi',
-  idHint:'Code à mettre dans l’objet pour rattacher un nouveau mail :',copyId:'Copier',
-  copyMail:'Copier',showAll:n=>`Voir tout l’historique (${n})`,hideAll:'Masquer l’historique',
-  sortDesc:'Plus récentes d’abord',sortAsc:'Plus anciennes d’abord',sortAdded:'Ajoutées récemment',
-  mainT:'Principale',setMain:'★ Principale',mainSet:'Photo principale modifiée',statusSaved:'Statut modifié',
+  pdf:'PDF',followUp:'Suivi du dossier',notePh:'Ajouter une note : où en est le dossier ?',addNote:'Ajouter',noteAdded:'Note ajoutée',newB:'Nouveau',
+  relaunch:'Relancer l’IA',relaunching:'Analyse en cours…',relaunched:'Champs complétés par l’IA',lastNote:'Dernier suivi',
+  idHint:'Pour rattacher un nouveau mail à ce dossier, mettez ce code dans l’objet lors du transfert :',copyId:'Copier le code',
+  service:'Service',svcAll:'Tous les services',svc_export:'ADV Export',svc_france:'ADV France',translating:'Traduction en anglais…',
+  copyMail:'Copier tout le mail',showAll:n=>`Voir tout l’historique (${n})`,hideAll:'Masquer l’historique',
+  sortDesc:'Date de réclamation : récentes d’abord',sortAsc:'Date de réclamation : anciennes d’abord',sortAdded:'Date d’ajout dans l’app',
+  mainT:'Principale',setMain:'Principale',mainSet:'Photo principale modifiée',
   removeQ:'Retirer ce fichier du dossier ?\n\nIl ira dans la corbeille de Drive. Si c’est un logo ou une signature, il sera ignoré automatiquement dans les prochains mails.',removed:'Fichier retiré',removeT:'Retirer',caseN:(i,n)=>`Dossier ${i} sur ${n}`,
-  subject:'Objet',copySubj:'Copier',techTodo:'À diagnostiquer',techDone:'Diagnostiqués',update:'Mettre à jour',movedDone:'Enregistré : le dossier est dans « Diagnostiqués »',diagOn:d=>'Diagnostiqué le '+d,doneN:n=>`${n} dossier${n>1?'s':''} diagnostiqué${n>1?'s':''}`,nothingDone:'Aucun dossier diagnostiqué',nothingDoneHint:'Les dossiers apparaissent ici après le diagnostic.',
+  subject:'Objet du mail',copySubj:'Copier l’objet',techTodo:'À diagnostiquer',techDone:'Diagnostiqués',update:'Mettre à jour',movedDone:'Enregistré : le dossier est dans « Diagnostiqués »',diagOn:d=>'Diagnostiqué le '+d,doneN:n=>`${n} dossier${n>1?'s':''} diagnostiqué${n>1?'s':''}`,nothingDone:'Aucun dossier diagnostiqué',nothingDoneHint:'Les dossiers apparaissent ici après le diagnostic.',
   quick:['Client relancé','Photos demandées','Photos reçues','Échantillon demandé','Échantillon reçu','Transmis au technicien','Transmis au fournisseur','Réponse envoyée au client','Avoir émis','Remplacement expédié','Réclamation refusée']},
- en:{tabCases:'Cases',tabTech:'Technician',tabStats:'Statistics',refresh:'Refresh',catalog:'Reference catalogue',newClaim:'+ New claim',
-  zoomHint:'Scroll or pinch to zoom · drag to move · double-click · ← → next photo',fitT:'Fit',hd:'Original HD',hdLoading:'Loading HD…',
-  diagT:'Diagnosis',diagFree:'No diagnosis yet. Write it here, or let the technician do it in their tab.',editDiag:'Edit',saveDiag:'Save diagnosis',
-  updates:'New data, refresh',guide:'How it works',language:'Language',moreFilters:'Filters',
-  guideTitle:'How it works, in 4 steps',gotIt:'Got it, hide',
-  g1t:'Record',g1:'The email arrives (or “+ New claim”), then “Request the form”: the customer fills everything in online, with photos.',
-  fmT:'Customer form',fmNone:'Ask the customer to fill in the online form: questions adapted to the type of problem, mandatory photos, warranty conditions. They can save it and finish later.',
-  fmAsk:'📨 Request the form',fmResend:'📨 Send the message again',fmCopyLink:'Copy link',fmOpen:'View the form ↗',
-  fmS_cree:'Link created',fmS_ouvert:'Opened by the customer',fmS_brouillon:'Being filled in',fmS_soumis:'Form received',fmSent:'Sent to customer',
-  fmChip_cree:'📨 Form sent',fmChip_ouvert:'👁 Form opened',fmChip_brouillon:'✎ Form in progress',fmChip_soumis:'✓ Form received',
-  fmAnswers:'Customer answers',fmPhotos:'Form photos',fmModalT:'Request the form from the customer',fmLang:'Message language',fmTo:'To',
-  fmCopyMsg:'📋 Copy message',fmMail:'✉ Open in my email',fmMarked:'Case marked “Form sent”',fmNotReady:'The server does not have the form feature yet (see INSTALL.md).',
-  fmHint:'Copy the message or open your email: the case moves to “Form sent”. Keep the case reference in the subject: customer replies will be linked automatically.',
-  editData:'✎ Edit',noContact:'Contact missing',noEmail:'Email missing',emailSaved:'Case email updated',
-  stRecu:'Received',stForm:'Form',stDiag:'Diagnosis',stRep:'Reply',stClos:'Closed',stSkip:'optional',
-  g2t:'Diagnose',g2:'The technician picks the cause in their tab, or you write it in the case.',
-  g3t:'Reply',g3:'Open the case: the AI drafts a reply to copy into your email.',
-  g4t:'Supplier',g4:'Statistics tab: Excel + photos to send to the supplier.',
-  search:'Search',client:'Customer',ref:'Reference',type:'Type',status:'Status',from:'From',to:'To',clear:'Clear',exportList:'Excel',
-  all:'All',allF:'All',of:'of',noCases:'No claims yet',noCasesHint:'Click “+ New claim” or forward the email to the Gmail inbox with the Litiges label.',
+ en:{tabCases:'Cases',tabTech:'Technician',tabStats:'Statistics and supplier',refresh:'Refresh',catalog:'Catalogue',newClaim:'+ New claim',
+  search:'Search',client:'Customer',ref:'Reference',type:'Type',status:'Status',from:'From',to:'To',clear:'Clear filters',exportList:'Export list (Excel)',
+  all:'All',allF:'All',of:'of',noCases:'No claims yet',noCasesHint:'Click “New claim” or forward the email to the Gmail inbox with the Litiges label.',
   noMatch:'No cases match these filters',noMatchHint:'Remove a filter to see more.',noPhoto:'No photo',noSummary:'No summary',
   nthClaim:n=>`Claim no. ${n} on this ref.`,rolls:n=>`${n} roll${n>1?'s':''}`,ofM:m=>` of ${m} m`,order:'Order',sentSupplier:'Sent to supplier',fromMail:'Received by email',
-  techHint:'Pick the cause, write the diagnosis, then press Enter.',pendingN:n=>`${n} case${n>1?'s':''} to diagnose`,pendingT:'To diagnose',
-  nothing:'Nothing to diagnose',nothingHint:'Cases “To analyse” show up here.',cause:'Cause',diagLabel:'Diagnosis',diagSmall:'one sentence',sugLabel:'Advice for the reply',sugSmall:'optional',
-  diagPh:'E.g.: film creased in transit, box crushed',sugPh:'What to tell the customer',
-  saveNext:'Save and next',askInfo:'Ask for more info',details:'Open case',writeDiag:'Write the diagnosis',saved:'Saved',movedWait:'Moved to “Waiting for customer”',
-  onlySupplier:'Only supplier-attributable',onlyNotSent:'Only not yet sent',supXlsx:'Supplier Excel',supZip:'Photos (ZIP)',
-  supTitle:'Send to supplier',supHint:'Prepare the file and photos to send in 3 clicks. The period chosen above applies.',
-  sup1:'Choose the cases',sup2:'Download the Excel',sup3:'Download the photos',supN:n=>`${n} case${n>1?'s':''} will be exported`,
-  period:'Period',periodHint:'Empty = since the start',
-  byRef:'By reference',byRefHint:'Most affected references first. The bar shows the split by cause.',bySymptom:'By symptom',bySymptomHint:'What customers report.',
-  repeat:'Repeat customers',repeatHint:'Customers with more than one claim.',byMonth:'By month',
-  kClaims:'claims',kRolls:'rolls affected',kMeters:'metres affected',kSupplier:'supplier-attributable',kOpen:'to analyse or waiting',
-  cases:'Cases',rollsH:'Rolls',metersH:'Metres',byType:'Split',symptom:'Symptom',month:'Month',claims:'Claims',refs:'References',noData:'No data for this period.',noRepeat:'No customer with more than one claim.',
+  techHint:'Pick the cause, write it in one sentence and press Enter.',pendingN:n=>`${n} case${n>1?'s':''} to diagnose`,pendingT:'To diagnose',
+  nothing:'Nothing to diagnose',nothingHint:'Cases “To analyse” show up here.',cause:'Cause',diagPh:'Diagnosis in one sentence, then Enter',sugPh:'What to tell the customer (optional)',
+  saveNext:'Save and next',askInfo:'Ask for more info',details:'See details',writeDiag:'Write the diagnosis',saved:'Saved',movedWait:'Moved to “Waiting for customer”',
+  onlySupplier:'Only supplier-attributable',onlyNotSent:'Only not yet sent',supXlsx:'Excel for supplier',supZip:'Photos for supplier (ZIP)',
+  byRef:'By reference',bySymptom:'By symptom',repeat:'Repeat customers',byMonth:'By month',kClaims:'claims',kRolls:'rolls affected',kMeters:'metres affected',kSupplier:'supplier-attributable',kOpen:'not yet diagnosed',
+  cases:'Cases',rollsH:'Rolls',metersH:'Metres',byType:'Rolls by type',symptom:'Symptom',month:'Month',claims:'Claims',refs:'References',noData:'No data for this period.',noRepeat:'No customer with more than one claim.',
   markQ:n=>`Excel downloaded. Mark these ${n} cases as sent to the supplier today?`,markYes:'Yes, mark them',no:'No',marked:'Marked as sent',
-  newTitle:'New claim',close:'Close',cancel:'Cancel',save:'Save',pasteMail:'Customer email',dropHint:'📎 Drop photos or PDFs here, click to choose, or paste a screenshot (Ctrl+V)',
-  n1:'Paste the customer email and add the photos',n2:'Let the AI fill in the form',n3:'Check the form, then save',
-  gClient:'Customer',gProduct:'Product',gProblem:'Problem',
-  fillAI:'Fill in with AI',reading:'Reading the claim…',checkFields:'✓ Form filled in. Check the fields on the right, then save.',aiFail:'The AI did not answer. Fill in by hand or try again.',
+  newTitle:'New claim',close:'Close',cancel:'Cancel',save:'Save',pasteMail:'Customer email (paste it as is)',dropHint:'Drop photos or PDFs here, click to choose, or paste a screenshot (Ctrl+V)',
+  fillAI:'Fill in with AI',reading:'Reading the claim…',checkFields:'Check the fields, then save.',aiFail:'The AI did not answer. Fill in by hand or try again.',
   needInput:'Paste the email or add photos',missing:'Ask the customer for:',needClient:'Customer is missing',saving:'Saving…',savedCase:id=>'Claim saved: '+id,
-  contact:'Contact',email:'Email',claimDate:'Claim date',asWritten:'Ref. as written by customer',orderInv:'Order / invoice',lot:'Batch (if known)',rollsAff:'Rolls affected',format:'Format (m)',lang:'Customer language',
-  typeProv:'Probable cause',problem:'The problem in one sentence',problemPh:'E.g.: 4 rolls marked inside, box intact',resolution:'Resolution',
-  photos:'Photos and files',addFiles:'+ Add files',nClaimsRef:(n,r)=>`${n} claims from this customer on ${r}:`,techDiag:'Technician diagnosis',noDiag:'No diagnosis yet. The case is waiting in the Technician tab.',goTech:'Go to the Technician tab',
-  imputable:'Attributable to',sugg:'Advice',caseData:'Full record',caseDataHint:'customer, product, order…',saveChanges:'Save changes',changesSaved:'Changes saved',origMail:'Original customer email',
-  stepProblem:'The problem',reply:l=>`Reply to customer (${l})`,replyPh:'Your reply. Click “AI draft” to start from the diagnosis.',draftAI:'✨ AI draft',copy:'Copy',copied:'Copied',saveText:'Save',textSaved:'Text saved',
-  drafting:'Drafting…',reviewDraft:'Review and adapt before sending.',otherClaims:c=>`Other claims from ${c}`,date:'Date',problemH:'Problem',backup:'Backup',openDrive:'Drive folder ↗',history:'History',
+  contact:'Contact',email:'Email',claimDate:'Claim date',asWritten:'As written by customer',orderInv:'Order / invoice',lot:'Batch (if known)',rollsAff:'Rolls affected',format:'Format (m)',lang:'Customer language',
+  typeProv:'Type (provisional)',problem:'The problem in one sentence',problemPh:'E.g.: 4 rolls marked inside, box intact',resolution:'Resolution',
+  photos:'Photos and files',addFiles:'Add files',nClaimsRef:(n,r)=>`${n} claims from this customer on ${r}:`,techDiag:'Technician diagnosis',noDiag:'No diagnosis yet. The case shows in the Technician tab while it is “To analyse”.',
+  imputable:'Attributable to',sugg:'Suggested reply',caseData:'Case data',saveChanges:'Save changes',changesSaved:'Changes saved',origMail:'Original customer email',
+  reply:l=>`Reply to customer (${l})`,replyPh:'Your reply. You can ask the AI for a draft based on the diagnosis.',draftAI:'AI draft',copy:'Copy',copied:'Copied',saveText:'Save text',textSaved:'Text saved',
+  drafting:'Drafting…',reviewDraft:'Review and adapt before sending.',otherClaims:c=>`Other claims from ${c}`,date:'Date',problemH:'Problem',backup:'Backup',openDrive:'Open Drive folder',history:'History',
   sentOn:d=>'Sent to supplier on '+d,catHint:'One reference per line (e.g. SOL 251). The AI uses it to fix misspelled references.',catSaved:n=>`Catalogue saved (${n} references)`,
   apiUrl:'Apps Script web app URL',pin:'PIN',enter:'Sign in',badPin:'Wrong PIN',netErr:'Cannot reach the server',loading:'Loading…',errSave:'Could not save',preparing:'Preparing…',noCasesFilter:'No cases match these filters',
-  pdf:'PDF',followUp:'Follow-up',notePh:'Where does the case stand?',addNote:'Add',noteAdded:'Note added',newB:'New',
-  relaunch:'✨ Run AI again',relaunching:'Analysing…',relaunched:'Fields filled in by AI',lastNote:'Last update',
-  idHint:'Code to put in the subject to attach a new email:',copyId:'Copy',
-  copyMail:'Copy',showAll:n=>`Show full history (${n})`,hideAll:'Hide history',
-  sortDesc:'Newest first',sortAsc:'Oldest first',sortAdded:'Recently added',
-  mainT:'Main',setMain:'★ Main',mainSet:'Main photo updated',statusSaved:'Status updated',
+  pdf:'PDF',followUp:'Case follow-up',notePh:'Add a note: where does the case stand?',addNote:'Add',noteAdded:'Note added',newB:'New',
+  relaunch:'Run AI again',relaunching:'Analysing…',relaunched:'Fields filled in by AI',lastNote:'Last update',
+  idHint:'To attach a new email to this case, put this code in the subject when forwarding:',copyId:'Copy code',
+  service:'Team',svcAll:'All teams',svc_export:'ADV Export',svc_france:'ADV France',translating:'Translating into English…',
+  copyMail:'Copy the whole email',showAll:n=>`Show full history (${n})`,hideAll:'Hide history',
+  sortDesc:'Claim date: newest first',sortAsc:'Claim date: oldest first',sortAdded:'Date added to the app',
+  mainT:'Main',setMain:'Main',mainSet:'Main photo updated',
   removeQ:'Remove this file from the case?\n\nIt will go to the Drive bin. If it is a logo or signature, it will be ignored automatically in future emails.',removed:'File removed',removeT:'Remove',caseN:(i,n)=>`Case ${i} of ${n}`,
-  subject:'Subject',copySubj:'Copy',techTodo:'To diagnose',techDone:'Diagnosed',update:'Update',movedDone:'Saved: the case is now under “Diagnosed”',diagOn:d=>'Diagnosed on '+d,doneN:n=>`${n} diagnosed case${n>1?'s':''}`,nothingDone:'No diagnosed cases',nothingDoneHint:'Cases show up here once diagnosed.',
+  subject:'Email subject',copySubj:'Copy subject',techTodo:'To diagnose',techDone:'Diagnosed',update:'Update',movedDone:'Saved: the case is now under “Diagnosed”',diagOn:d=>'Diagnosed on '+d,doneN:n=>`${n} diagnosed case${n>1?'s':''}`,nothingDone:'No diagnosed cases',nothingDoneHint:'Cases show up here once diagnosed.',
   quick:['Customer chased','Photos requested','Photos received','Sample requested','Sample received','Sent to technician','Sent to supplier','Reply sent to customer','Credit note issued','Replacement shipped','Claim rejected']}
 };
 const LABELS={
  tipo:{transporte:['Transport','Transport'],fabricacion:['Fabrication','Manufacturing'],envejecimiento:['Vieillissement / performance','Ageing / performance'],instalacion:['Pose / usage','Installation / use'],pendiente:['À déterminer','To be determined']},
  sint:{taches:['Taches','Stains'],bulles:['Bulles','Bubbles'],plis:['Plis / froissures','Creases'],marques_bobine:['Marques de bobine','Core marks'],rayures:['Rayures','Scratches'],decollement:['Décollement / délamination','Peeling / delamination'],decoloration:['Décoloration','Discoloration'],adhesif:['Adhésif défectueux','Adhesive defect'],dechire:['Film déchiré ou coupé','Torn or cut film'],autre:['Autre','Other']},
- est:{analyse:['À analyser','To analyse'],formulaire:['Formulaire envoyé','Form sent'],attente:['Attente client','Waiting for customer'],diagnostique:['Diagnostiqué','Diagnosed'],repondu:['Répondu','Answered'],clos:['Clôturé','Closed']},
+ est:{analyse:['À analyser','To analyse'],attente:['Attente client','Waiting for customer'],diagnostique:['Diagnostiqué','Diagnosed'],repondu:['Répondu','Answered'],clos:['Clôturé','Closed']},
  res:{avoir:['Avoir','Credit note'],remplacement:['Remplacement','Replacement'],refuse:['Refusé','Rejected'],aucune:['Sans suite','No action']},
  imp:{transporteur:['Transporteur','Carrier'],fournisseur:['Fournisseur','Supplier'],client:['Client','Customer'],indetermine:['À déterminer','To be determined']},
  lng:{es:['Espagnol','Spanish'],en:['Anglais','English'],fr:['Français','French'],it:['Italien','Italian'],pt:['Portugais','Portuguese'],de:['Allemand','German']}
@@ -661,7 +419,7 @@ function applyI18n(){
   document.documentElement.lang=LANG;
   document.querySelectorAll('[data-t]').forEach(el=>el.textContent=t(el.dataset.t));
   document.querySelectorAll('[data-lang]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.lang===LANG));
-  $('#f-q').placeholder=LANG==='fr'?'Rechercher un client, une commande, un mot du mail…':'Search a customer, an order, a word from the email…';
+  $('#f-q').placeholder=LANG==='fr'?'Client, texte, commande…':'Customer, text, order…';
   $('#n-text').placeholder=LANG==='fr'?'Collez ici l’objet, l’expéditeur et le corps du mail…':'Paste the subject, sender and body here…';
 }
 
@@ -670,8 +428,8 @@ function lsGet(k){try{return localStorage.getItem(k)}catch(_){return null}}
 function lsSet(k,v){try{localStorage.setItem(k,v)}catch(_){}}
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const norm=s=>String(s||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/\b(d\.?o\.?o\.?|s\.?l\.?|sas|sarl|srl|gmbh|ltd)\b/g,'').replace(/[^a-z0-9]/g,'');
-const slug=s=>String(s||'sans-info').normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^A-Za-z0-9]+/g,'-').replace(/^-|-$/g,'')||'sans-info';
+const norm=s=>String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\b(d\.?o\.?o\.?|s\.?l\.?|sas|sarl|srl|gmbh|ltd)\b/g,'').replace(/[^a-z0-9]/g,'');
+const slug=s=>String(s||'sans-info').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^A-Za-z0-9]+/g,'-').replace(/^-|-$/g,'')||'sans-info';
 const today=()=>new Date().toISOString().slice(0,10);
 const fmtD=d=>{if(!d)return'';const x=new Date(String(d).slice(0,10)+'T12:00:00');return isNaN(x)?d:x.toLocaleDateString(LANG==='fr'?'fr-FR':'en-GB',{day:'2-digit',month:'short',year:'numeric'})};
 const tipoOf=c=>c.tipoFinal||c.tipoProv||'pendiente';
@@ -679,7 +437,7 @@ const impOf=c=>c.imputable||IMP[tipoOf(c)];
 const resumen=c=>(LANG==='en'?(c.resumeEn||c.resumeFr):(c.resumeFr||c.resumeEn))||'';
 const metros=c=>(+c.rollos||0)*(+c.formato||0);
 function toast(m){const e=$('#toast');e.textContent=m;e.hidden=false;clearTimeout(e._h);e._h=setTimeout(()=>e.hidden=true,2800)}
-function stChip(e){return `<span class="st st-${esc(e||'analyse')}">${esc(L('est',e))}</span>`}
+function stChip(e){const cls=(e==='analyse'||e==='attente')?'st-a':e==='clos'?'st-c':'st-d';return `<span class="chip ${cls}">${esc(L('est',e))}</span>`}
 function tipoChip(k){return `<span class="chip"><i class="dot" style="background:var(${TCOL[k]||TCOL.pendiente})"></i>${esc(L('tipo',k))}</span>`}
 function opts(keys,sel,lab){return keys.map(v=>`<option value="${esc(v)}" ${String(v)===String(sel??'')?'selected':''}>${esc(lab?lab(v):(v||'—'))}</option>`).join('')}
 function recInfo(c){const same=CASOS.filter(x=>norm(x.cliente)&&norm(x.cliente)===norm(c.cliente)&&x.referencia&&x.referencia===c.referencia).sort((a,b)=>String(a.fechaReclamo).localeCompare(String(b.fechaReclamo)));return{n:same.length,pos:same.findIndex(x=>x.id===c.id)+1,list:same}}
@@ -701,6 +459,7 @@ const KEY_KINDS=['note','mail','new'];
 let showFullHist=false;
 function timeline(c,full){return (c.historial||[]).filter(e=>full||KEY_KINDS.includes(e.kind)).slice().reverse().map(e=>{const cls=e.kind==='note'?'note':(e.kind==='mail'||e.kind==='new')?'mail':e.kind==='lu'?'lu':'sys';
   return `<li class="${cls}"><time>${new Date(e.t).toLocaleString(LANG==='fr'?'fr-FR':'en-GB',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'})}</time><span>${esc(e.accion)}</span></li>`}).join('')}
+function histTxt(c){return (c.historial||[]).slice().reverse().map(h=>`<li>${new Date(h.t).toLocaleString(LANG==='fr'?'fr-FR':'en-GB')} : ${esc(h.accion)}</li>`).join('')}
 
 /* ============ API ============ */
 const DEFAULT_API='https://script.google.com/macros/s/AKfycbyh3_bgg0W8zoeBoswJwBfOEfvJ10sTsuhPqJTB0X5ccbLpXv70cysEXLQ-AkJWo5z0dA/exec';
@@ -762,23 +521,16 @@ const mimg=(c,fid,size,cls='',extra='')=>{const u=MEDIA.get(fid+'@'+size);const 
 
 /* ============ state ============ */
 let CASOS=[], CATALOGO=[], newFiles=[], techDraft={}, lastExport=null, openId=null;
-/* formulaires client : dernier formulaire par dossier ; FORMS_OK = le serveur gère les formulaires */
-let FORMS={}, FORMS_OK=false;
-function setForms(list){FORMS_OK=Array.isArray(list);FORMS={};(list||[]).forEach(f=>{FORMS[f.caseId]=f})}
-const formOf=c=>FORMS[c.id]||null;
-const formUrl=tok=>new URL('form.html?t='+encodeURIComponent(tok),location.href).href;
-function formChip(c){const f=formOf(c);if(!f)return'';return `<span class="chip fm${f.statut==='soumis'?' ok':''}">${esc(t('fmChip_'+f.statut))}</span>`}
 
 const sigOf=list=>JSON.stringify(list,(k,v)=>k.startsWith('_')?undefined:v);
-function markFresh(){$('#b-updates').hidden=true}
+function markFresh(){const b=$('#b-refresh');b.classList.remove('primary');b.textContent=t('refresh')}
 async function checkUpdates(){
-  try{const [cases,forms]=await Promise.all([api('list'),api('formList').catch(()=>null)]);
-    if(sigOf(cases)!==sigOf(CASOS)||(forms&&sigOf(forms)!==sigOf(Object.values(FORMS))))$('#b-updates').hidden=false}catch(_){}
+  try{const cases=await api('list');if(sigOf(cases)!==sigOf(CASOS)){const b=$('#b-refresh');b.classList.add('primary');b.textContent='● '+t('refresh')}}catch(_){}
 }
 async function load(silent){
   try{
-    const [cases,cat,forms]=await Promise.all([api('list'),CATALOGO.length&&silent?Promise.resolve(CATALOGO):api('catalog'),api('formList').catch(()=>null)]);
-    CASOS=cases;CATALOGO=cat;setForms(forms);renderAll();markFresh();
+    const [cases,cat]=await Promise.all([api('list'),CATALOGO.length&&silent?Promise.resolve(CATALOGO):api('catalog')]);
+    CASOS=cases;CATALOGO=cat;renderAll();markFresh();
     if(!CATALOGO.length){try{await api('saveCatalog',{refs:DEFAULT_CATALOG});CATALOGO=DEFAULT_CATALOG.slice()}catch(_){}}
   }catch(e){if(!silent)toast(e.message)}
 }
@@ -790,99 +542,90 @@ $('#l-go').onclick=async()=>{
   API_URL=$('#l-url').value.trim()||API_URL;PIN=$('#l-pin').value.trim();
   if(!API_URL){$('#url-field').hidden=false;return}
   $('#l-err').textContent=t('loading');
-  try{CASOS=await api('list');lsSet('lit_api',API_URL);lsSet('lit_pin',PIN);$('#login').hidden=true;CATALOGO=await api('catalog').catch(()=>[]);setForms(await api('formList').catch(()=>null));if(!CATALOGO.length){try{await api('saveCatalog',{refs:DEFAULT_CATALOG});CATALOGO=DEFAULT_CATALOG.slice()}catch(_){}}renderAll()}
+  try{CASOS=await api('list');lsSet('lit_api',API_URL);lsSet('lit_pin',PIN);$('#login').hidden=true;CATALOGO=await api('catalog').catch(()=>[]);if(!CATALOGO.length){try{await api('saveCatalog',{refs:DEFAULT_CATALOG});CATALOGO=DEFAULT_CATALOG.slice()}catch(_){}}renderAll()}
   catch(e){$('#l-err').textContent=e.message==='PIN'?t('badPin'):e.message;$('#url-field').hidden=false}
 };
 $('#l-pin').onkeydown=e=>{if(e.key==='Enter')$('#l-go').click()};
 
-/* ============ onglets, menu, langue, guide ============ */
+/* ============ tabs / lang ============ */
 document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>showView(b.dataset.v));
-function showView(v){document.querySelectorAll('.tab').forEach(b=>b.setAttribute('aria-selected',b.dataset.v===v));['casos','tecnico','stats'].forEach(x=>$('#v-'+x).hidden=x!==v);if(v==='tecnico')renderTech(true);if(v==='stats')renderStats();window.scrollTo(0,0)}
-const closeMenu=()=>$('#menu').open=false;
-document.addEventListener('click',e=>{if($('#menu').open&&!$('#menu').contains(e.target))closeMenu()});
+function showView(v){document.querySelectorAll('.tab').forEach(b=>b.setAttribute('aria-selected',b.dataset.v===v));['casos','tecnico','stats'].forEach(x=>$('#v-'+x).hidden=x!==v);if(v==='tecnico')renderTech(true);if(v==='stats')renderStats()}
 document.querySelectorAll('[data-lang]').forEach(b=>b.onclick=()=>{LANG=b.dataset.lang;lsSet('lit_lang',LANG);applyI18n();renderAll();if(!$('#v-tecnico').hidden)renderTech(true);if(!$('#m-new').hidden)$('#n-form').innerHTML=formHTML(readForm($('#n-form')))});
-$('#b-refresh').onclick=()=>{closeMenu();load()};
-$('#b-updates').onclick=()=>load();
-function showGuide(on){$('#guide').hidden=!on}
-$('#g-close').onclick=()=>{lsSet('lit_guide_off','1');showGuide(false)};
-$('#b-guide').onclick=()=>{closeMenu();showView('casos');showGuide(true);$('#guide').scrollIntoView({block:'start'})};
+$('#b-refresh').onclick=()=>load();
 
-/* ============ liste ============ */
-let SORT=lsGet('lit_sort')||'desc', STATUS='';
+/* ============ list ============ */
+let SORT=lsGet('lit_sort')||'desc';
 function fillSort(){$('#f-sort').innerHTML=[['desc','sortDesc'],['asc','sortAsc'],['added','sortAdded']].map(([v,k])=>`<option value="${v}" ${SORT===v?'selected':''}>${esc(t(k))}</option>`).join('')}
 $('#f-sort').onchange=e=>{SORT=e.target.value;lsSet('lit_sort',SORT);renderList()};
-const FIL=['#f-q','#f-cli','#f-ref','#f-tipo','#f-d1','#f-d2'];
-function fillFilterSelects(){fillSort();
+const svcOf=c=>c.service==='france'?'france':'export';
+function svcOpts(sel){return `<option value="">${esc(t('svcAll'))}</option>`+['export','france'].map(k=>`<option value="${k}" ${sel===k?'selected':''}>${esc(t('svc_'+k))}</option>`).join('')}
+const FIL=['#f-q','#f-cli','#f-ref','#f-tipo','#f-est','#f-d1','#f-d2'];
+function fillFilterSelects(){fillSort();{const v=$('#f-svc').value||lsGet('lit_svc')||'';$('#f-svc').innerHTML=svcOpts(v);$('#s-svc').innerHTML=svcOpts($('#s-svc').value||v)}
   const cli=[...new Set(CASOS.map(c=>c.cliente).filter(Boolean))].sort();const refs=[...new Set(CASOS.map(c=>c.referencia).filter(Boolean))].sort();
   const v=FIL.map(s=>$(s).value);
   $('#f-cli').innerHTML=`<option value="">${t('all')}</option>`+opts(cli,v[1]);
   $('#f-ref').innerHTML=`<option value="">${t('allF')}</option>`+opts(refs,v[2]);
   $('#f-tipo').innerHTML=`<option value="">${t('all')}</option>`+opts(TIPOS,v[3],k=>L('tipo',k));
+  $('#f-est').innerHTML=`<option value="">${t('all')}</option>`+opts(Object.keys(LABELS.est),v[4],k=>L('est',k));
 }
 FIL.forEach(s=>$(s).addEventListener('input',renderList));
-$('#f-clear').onclick=()=>{FIL.forEach(s=>$(s).value='');STATUS='';renderList()};
-$('#b-filters').onclick=()=>{const f=$('#filters');f.hidden=!f.hidden;$('#b-filters').setAttribute('aria-expanded',!f.hidden)};
+$('#f-svc').addEventListener('input',e=>{lsSet('lit_svc',e.target.value);renderList();if(!$('#v-tecnico').hidden)renderTech(true)});
+$('#f-clear').onclick=()=>{FIL.forEach(s=>$(s).value='');renderList()};
 function filtered(){
-  const [q,cli,ref,tp,d1,d2]=FIL.map(s=>$(s).value);const nq=norm(q);
-  return CASOS.filter(c=>(!cli||c.cliente===cli)&&(!ref||c.referencia===ref)&&(!tp||tipoOf(c)===tp)&&(!STATUS||c.estado===STATUS)&&(!d1||String(c.fechaReclamo)>=d1)&&(!d2||String(c.fechaReclamo)<=d2)
+  const [q,cli,ref,tp,es,d1,d2]=FIL.map(s=>$(s).value);const nq=norm(q);
+  const sv=$('#f-svc').value;
+  return CASOS.filter(c=>(!sv||svcOf(c)===sv)&&(!cli||c.cliente===cli)&&(!ref||c.referencia===ref)&&(!tp||tipoOf(c)===tp)&&(!es||c.estado===es)&&(!d1||String(c.fechaReclamo)>=d1)&&(!d2||String(c.fechaReclamo)<=d2)
     &&(!nq||norm([c.cliente,c.resumeFr,c.resumeEn,c.textoOriginal,c.pedido,c.referencia,c.id].join(' ')).includes(nq)))
   .sort((a,b)=>{const da=String(a.fechaReclamo||'').slice(0,10),db=String(b.fechaReclamo||'').slice(0,10);
     if(SORT==='added')return String(b.creado).localeCompare(String(a.creado));
     const r=SORT==='asc'?da.localeCompare(db):db.localeCompare(da);return r||String(b.creado).localeCompare(String(a.creado))});
 }
-function renderPills(){
-  const keys=['',...Object.keys(LABELS.est)];
-  $('#stpills').innerHTML=keys.map(k=>{const n=k?CASOS.filter(c=>c.estado===k).length:CASOS.length;
-    return `<button class="pill" data-st="${k}" aria-pressed="${STATUS===k}">${k?`<i class="dot st-${k}" style="background:currentColor"></i>`:''}${esc(k?L('est',k):t('all'))} <span>${n}</span></button>`}).join('');
-  $('#stpills').querySelectorAll('.pill').forEach(b=>b.onclick=()=>{STATUS=b.dataset.st;renderList()});
-  const nf=FIL.slice(1).filter(s=>$(s).value).length;$('#nfil').textContent=nf;$('#nfil').hidden=!nf;
-}
 function monthLabel(d){if(!d)return'—';const x=new Date(String(d).slice(0,7)+'-15T12:00:00');return isNaN(x)?'—':x.toLocaleDateString(LANG==='fr'?'fr-FR':'en-GB',{month:'long',year:'numeric'})}
 function renderList(){
-  renderPills();
-  const list=filtered();$('#count').textContent=CASOS.length?`${list.length} ${t('of')} ${CASOS.length}`:'';
-  if(!CASOS.length){$('#rows').innerHTML=`<div class="empty-state"><strong>${t('noCases')}</strong><span>${t('noCasesHint')}</span><button class="btn primary" onclick="$('#b-new').click()">${t('newClaim')}</button></div>`;showGuide(true);return}
-  if(!list.length){$('#rows').innerHTML=`<div class="empty-state"><strong>${t('noMatch')}</strong><span>${t('noMatchHint')}</span><button class="btn" onclick="$('#f-clear').click()">${t('clear')}</button></div>`;return}
+  const list=filtered();$('#count').textContent=`${list.length} ${t('of')} ${CASOS.length}`;
+  if(!CASOS.length){$('#rows').innerHTML=`<div class="empty-state"><strong>${t('noCases')}</strong>${t('noCasesHint')}</div>`;return}
+  if(!list.length){$('#rows').innerHTML=`<div class="empty-state"><strong>${t('noMatch')}</strong>${t('noMatchHint')}</div>`;return}
   const mkey=c=>SORT==='added'?String(c.creado).slice(0,7):String(c.fechaReclamo||'').slice(0,7);
   const counts={};list.forEach(c=>{const k=mkey(c);counts[k]=(counts[k]||0)+1});
   let lastM=null;
-  $('#rows').innerHTML=list.map(c=>{const r=recInfo(c);const f=(c.fotos||[])[0];const ln=lastNote(c);
-    const mk=mkey(c);const div=mk!==lastM?`<div class="mdiv">${esc(monthLabel(mk))} · ${counts[mk]}</div>`:'';lastM=mk;
+  $('#rows').innerHTML=list.map(c=>{const r=recInfo(c);const f=(c.fotos||[])[0];
+    const mk=mkey(c);const div=mk!==lastM?`<div class="mdiv">${esc(monthLabel(mk))} <span>· ${counts[mk]}</span></div>`:'';lastM=mk;
     return div+`<button class="row" data-id="${esc(c.id)}">${f?mimg(c,f,200,'thumb','loading="lazy"'):`<div class="thumb">${t('noPhoto')}</div>`}
-    <div class="rbody"><div class="rtop"><strong>${esc(c.cliente||'—')}</strong>${c.referencia?`<span class="chip ref">${esc(c.referencia)}</span>`:''}${unread(c)?`<span class="chip new">${t('newB')}</span>`:''}${formChip(c)}${r.n>1?`<span class="chip rec">${t('nthClaim',r.pos)}</span>`:''}</div>
-    <p class="rsum">${esc(resumen(c)||t('noSummary'))}</p>
-    <div class="meta">${tipoChip(tipoOf(c))}${c.rollos?`<span>${t('rolls',+c.rollos)}${c.formato?t('ofM',c.formato):''}</span>`:''}${c.sintoma?`<span>${esc(L('sint',c.sintoma))}</span>`:''}</div>
-    ${ln?`<div class="lastnote">📝 <b>${esc(ln.accion)}</b> · ${fmtD(ln.t)}</div>`:''}</div>
-    <div class="side">${stChip(c.estado)}<span class="date">${fmtD(c.fechaReclamo)}</span></div></button>`}).join('');
+    <div class="rbody"><h3>${esc(c.cliente||'—')} ${c.referencia?`<span class="chip ref">${esc(c.referencia)}</span>`:''} ${r.n>1?`<span class="chip rec">${t('nthClaim',r.pos)}</span>`:''}${unread(c)?`<span class="chip new">${t('newB')}</span>`:''}</h3>
+    ${subjectOf(c)?`<p class="subjl">✉ ${esc(subjectOf(c))}</p>`:''}<p>${esc(resumen(c)||t('noSummary'))}</p>
+    <div class="meta"><span class="chip svc">${esc(t('svc_'+svcOf(c)))}</span>${tipoChip(tipoOf(c))}${c.sintoma?`<span>${esc(L('sint',c.sintoma))}</span>`:''}${c.rollos?`<span>${t('rolls',+c.rollos)}${c.formato?t('ofM',c.formato):''}</span>`:''}${c.pedido?`<span>${t('order')} ${esc(c.pedido)}</span>`:''}${c.origen==='mail'?`<span>${t('fromMail')}</span>`:''}</div>${lastNote(c)?`<div class="meta" style="margin-top:4px">${t('lastNote')} (${fmtD(lastNote(c).t)}) : <b style="color:var(--ink)">${esc(lastNote(c).accion)}</b></div>`:''}</div>
+    <div class="side">${stChip(c.estado)}<span class="meta">${fmtD(c.fechaReclamo)}</span>${c.enviadoProveedor?`<span class="meta">${t('sentSupplier')}</span>`:''}</div></button>`}).join('');
   document.querySelectorAll('.row').forEach(b=>b.onclick=()=>openDetail(b.dataset.id));
   hydrate($('#rows'));
 }
 
-/* ============ formulaire (le statut se change en haut de la fiche) ============ */
+/* ============ form ============ */
 function formHTML(v={},prefix='n'){
-  return `<fieldset class="fg"><legend>${t('gClient')}</legend><div class="grid2">
-   <div class="field"><label>${t('client')} *</label><input class="inp" data-k="cliente" value="${esc(v.cliente)}"></div>
+  return `<div class="grid2">
+   <div class="field"><label>${t('client')}</label><input class="inp" data-k="cliente" value="${esc(v.cliente)}"></div>
    <div class="field"><label>${t('claimDate')}</label><input type="date" class="inp" data-k="fechaReclamo" value="${esc(String(v.fechaReclamo||today()).slice(0,10))}"></div>
    <div class="field"><label>${t('contact')}</label><input class="inp" data-k="contacto" value="${esc(v.contacto)}"></div>
    <div class="field"><label>${t('email')}</label><input class="inp" data-k="email" value="${esc(v.email)}"></div>
-   <div class="field"><label>${t('lang')}</label><select class="inp" data-k="idioma">${opts(Object.keys(LABELS.lng),v.idioma||'fr',k=>L('lng',k))}</select></div></div></fieldset>
-  <fieldset class="fg"><legend>${t('gProduct')}</legend><div class="grid2">
    <div class="field"><label>${t('ref')}</label><input class="inp" data-k="referencia" list="${prefix}-refs" value="${esc(v.referencia)}"><datalist id="${prefix}-refs">${CATALOGO.map(r=>`<option value="${esc(r)}">`).join('')}</datalist></div>
    <div class="field"><label>${t('asWritten')}</label><input class="inp" data-k="referenciaTexto" value="${esc(v.referenciaTexto)}"></div>
    <div class="field"><label>${t('orderInv')}</label><input class="inp" data-k="pedido" value="${esc(v.pedido)}"></div>
-   <div class="field"><label>${t('lot')}</label><input class="inp" data-k="lote" value="${esc(v.lote)}"></div>
+   <div class="field"><label>${t('lot')}</label><input class="inp" data-k="lote" value="${esc(v.lote)}"></div></div>
+  <div class="grid3">
    <div class="field"><label>${t('rollsAff')}</label><input type="number" min="0" class="inp" data-k="rollos" value="${esc(v.rollos)}"></div>
-   <div class="field"><label>${t('format')}</label><select class="inp" data-k="formato">${opts(['','10','30','50'],v.formato,x=>x?x+' m':'—')}</select></div></div></fieldset>
-  <fieldset class="fg"><legend>${t('gProblem')}</legend><div class="grid2">
+   <div class="field"><label>${t('format')}</label><select class="inp" data-k="formato">${opts(['','10','30','50'],v.formato,x=>x?x+' m':'—')}</select></div>
+   <div class="field"><label>${t('lang')}</label><select class="inp" data-k="idioma">${opts(Object.keys(LABELS.lng),v.idioma||'fr',k=>L('lng',k))}</select></div></div>
+  <div class="grid2">
    <div class="field"><label>${t('typeProv')}</label><select class="inp" data-k="tipoProv">${opts(TIPOS,v.tipoProv||'pendiente',k=>L('tipo',k))}</select></div>
    <div class="field"><label>${t('symptom')}</label><select class="inp" data-k="sintoma">${opts(['',...Object.keys(LABELS.sint)],v.sintoma,k=>k?L('sint',k):'—')}</select></div></div>
-   <div class="field"><label>${t('problem')} (FR)</label><input class="inp" data-k="resumeFr" value="${esc(v.resumeFr)}" placeholder="${esc(t('problemPh'))}"></div>
-   <div class="field"><label>${t('problem')} (EN)</label><input class="inp" data-k="resumeEn" value="${esc(v.resumeEn)}"></div></fieldset>`;
+  <div class="field"><label>${t('problem')} (FR)</label><input class="inp" data-k="resumeFr" value="${esc(v.resumeFr)}" placeholder="${esc(t('problemPh'))}"></div>
+  <div class="field"><label>${t('problem')} (EN)</label><input class="inp" data-k="resumeEn" value="${esc(v.resumeEn)}"></div>
+  <div class="grid2"><div class="field"><label>${t('status')}</label><select class="inp" data-k="estado">${opts(Object.keys(LABELS.est),v.estado||'analyse',k=>L('est',k))}</select></div>
+   <div class="field"><label>${t('service')}</label><select class="inp" data-k="service">${opts(['export','france'],v.service||$('#f-svc').value||lsGet('lit_svc')||'export',k=>t('svc_'+k))}</select></div></div>`;
 }
 function readForm(root){const o={};root.querySelectorAll('[data-k]').forEach(el=>{let v=el.value.trim();if(el.dataset.k==='rollos')v=v===''?'':+v;o[el.dataset.k]=v});return o}
 
-/* ============ nouveau litige ============ */
-$('#b-new').onclick=()=>{newFiles.forEach(f=>f.url&&URL.revokeObjectURL(f.url));newFiles=[];$('#n-text').value='';$('#ai-state').textContent='';$('#ai-falta').innerHTML='';$('#n-form').innerHTML=formHTML({});$('#n-form')._faltan=[];renderPending();$('#m-new').hidden=false;$('#n-text').focus()};
+/* ============ new claim ============ */
+$('#b-new').onclick=()=>{newFiles.forEach(f=>f.url&&URL.revokeObjectURL(f.url));newFiles=[];$('#n-text').value='';$('#ai-state').textContent='';$('#ai-falta').innerHTML='';$('#n-form').innerHTML=formHTML({});renderPending();$('#m-new').hidden=false;$('#n-text').focus()};
 document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>b.closest('.modal').hidden=true);
 const drop=$('#drop');
 drop.onclick=()=>$('#n-files').click();drop.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();$('#n-files').click()}};
@@ -911,144 +654,59 @@ $('#b-ai').onclick=async()=>{
     ['cliente','contacto','email','idioma','fechaReclamo','referenciaTexto','referencia','pedido','lote','rollos','formato','tipoProv','sintoma','resumeFr','resumeEn'].forEach(k=>{if(r[k]!==null&&r[k]!==undefined&&r[k]!=='')cur[k]=r[k]});
     $('#n-form').innerHTML=formHTML(cur);$('#n-form')._faltan=r.faltan||[];
     $('#ai-state').textContent=t('checkFields');
-    $('#ai-falta').innerHTML=(r.faltan&&r.faltan.length)?`<div class="alert"><b>${t('missing')}</b> ${r.faltan.map(esc).join(', ')}</div>`:'';
+    $('#ai-falta').innerHTML=(r.faltan&&r.faltan.length)?`<div class="falta"><b>${t('missing')}</b> ${r.faltan.map(esc).join(', ')}</div>`:'';
   }catch(e){$('#ai-state').textContent=t('aiFail')+' ('+e.message+')'}finally{btn.disabled=false}
 };
 $('#b-save-new').onclick=async()=>{
-  const v=readForm($('#n-form'));if(!v.cliente){toast(t('needClient'));$('#n-form [data-k="cliente"]').focus();return}
-  v.estado='analyse';v.faltan=$('#n-form')._faltan||[];
+  const v=readForm($('#n-form'));if(!v.cliente){toast(t('needClient'));return}
+  v.faltan=$('#n-form')._faltan||[];
   const btn=$('#b-save-new');btn.disabled=true;btn.textContent=t('saving');
   try{const c=await api('create',{fields:v,files:await filesPayload(newFiles),textoOriginal:$('#n-text').value});$('#m-new').hidden=true;toast(t('savedCase',c.id));await load(true)}
   catch(e){toast(t('errSave')+' : '+e.message)}finally{btn.disabled=false;btn.textContent=t('save')}
 };
 
-/* ============ fiche dossier ============ */
-let DOPEN=new Set();
-/* brouillon du diagnostic écrit directement dans la fiche */
-let DD=null, DD_EDIT=false;
-function openDetail(id){if(openId!==id){DOPEN=new Set();showFullHist=false;DD=null;DD_EDIT=false}openId=id;renderDetail();$('#scrim').hidden=false;$('#drawer').hidden=false;$('#drawer').scrollTop=0;document.body.style.overflow='hidden';
+/* ============ detail ============ */
+function openDetail(id){openId=id;renderDetail();$('#scrim').hidden=false;$('#drawer').hidden=false;
   const c=CASOS.find(x=>x.id===id);if(c&&unread(c)){api('addNote',{id,kind:'lu'}).then(nc=>{const i=CASOS.findIndex(x=>x.id===id);if(i>=0)CASOS[i]=nc;renderList();if(openId===id)renderDetail(true)}).catch(()=>{})}}
-function closeDetail(){openId=null;$('#scrim').hidden=true;$('#drawer').hidden=true;document.body.style.overflow=''}
+function closeDetail(){openId=null;$('#scrim').hidden=true;$('#drawer').hidden=true}
 $('#scrim').onclick=closeDetail;
-document.addEventListener('keydown',e=>{
-  if(!$('#lb').hidden){const k=e.key;
-    if(k==='ArrowLeft')lbGo(-1);else if(k==='ArrowRight')lbGo(1);else if(k==='+'||k==='=')zoomAt(V.s*1.6);else if(k==='-')zoomAt(V.s/1.6);else if(k==='0')lbFit();
-    if(k==='Escape')closeViewer();return}
-  if(e.key!=='Escape')return;
-  const m=[...document.querySelectorAll('.modal')].find(x=>!x.hidden);if(m){m.hidden=true;return}
-  if($('#menu').open){closeMenu();return}
-  if(openId)closeDetail()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(!$('#lb').hidden)$('#lb').hidden=true;else if(openId)closeDetail()}});
 async function update(id,fields,hist){const c=await api('update',{id,fields,hist});const i=CASOS.findIndex(x=>x.id===id);if(i>=0)CASOS[i]=c;renderAll();return c}
-/* Étapes : Reçu → Formulaire client → Diagnostic → Réponse → Clôturé (avec la résolution) */
-function stepper(c){
-  const f=formOf(c),e=c.estado,closed=e==='clos',answered=closed||e==='repondu';
-  const st=[
-    {l:t('stRecu'),done:true,sub:fmtD(c.fechaReclamo)},
-    {l:t('stForm'),done:!!f&&f.statut==='soumis',active:!!f||e==='formulaire',sub:f?t('fmS_'+f.statut):t('stSkip')},
-    {l:t('stDiag'),done:!!c.diagnostico,sub:c.diagnostico?L('tipo',c.tipoFinal):''},
-    {l:t('stRep'),done:answered},
-    {l:t('stClos'),done:closed,sub:closed&&c.resolucion?L('res',c.resolucion):''}];
-  const skipForm=!f&&e!=='formulaire'&&(c.diagnostico||answered);
-  let cur=st.findIndex((x,i)=>!x.done&&!(i===1&&(skipForm||(!f&&e!=='formulaire'))));if(cur<0)cur=st.length;
-  return `<ol class="stepper">${st.map((x,i)=>{const cls=x.done?'done':i===cur?'cur':'';const wait=i===cur&&e==='attente';
-    return `<li class="${cls}${wait?' wait':''}"><i>${x.done?'✓':wait?'!':i+1}</i><span>${esc(wait?L('est','attente'):x.l)}${x.sub?`<small>${esc(x.sub)}</small>`:''}</span></li>`}).join('')}</ol>`;
-}
-function formSection(c){
-  const f=formOf(c);
-  let h=`<section class="dsec"><h3><i class="num">2</i>${t('fmT')}</h3>`;
-  if(!f){
-    h+=`<p class="note" style="margin:0 0 10px">${t('fmNone')}</p>${FORMS_OK?'':`<p class="note" style="margin:0 0 10px;color:var(--amber)">${t('fmNotReady')}</p>`}<button class="btn primary sm" id="d-fask">${t('fmAsk')}</button>`;
-    return h+'</section>';
-  }
-  const order=['cree','ouvert','brouillon','soumis'];const k=order.indexOf(f.statut);
-  h+=`<div class="fbox"><ul class="fsteps">${order.map((s,i)=>`<li class="${i===k?'on':''}"><i>${i<=k?'✓':'○'}</i>${t('fmS_'+s)}${i===0&&f.cree?' · '+fmtD(f.cree):''}${i===2&&f.maj&&k===2?' · '+fmtD(f.maj):''}${i===3&&f.envoye?' · '+fmtD(f.envoye):''}</li>`).join('')}</ul>`;
-  if(f.statut!=='soumis')h+=`<div class="actrow" style="margin-top:0"><button class="btn sm" id="d-fask">${t('fmResend')}</button><button class="btn ghost sm" id="d-flink">${t('fmCopyLink')}</button><a class="btn ghost sm" href="${esc(formUrl(f.token))}" target="_blank" rel="noopener">${t('fmOpen')}</a></div>`;
-  h+='</div>';
-  if(f.statut==='soumis'){
-    const byCat={};(f.fichiers||[]).forEach(x=>{(byCat[x.cat]=byCat[x.cat]||[]).push(x)});
-    h+=`<details data-k="fans" ${DOPEN.has('fans')?'open':''} open style="margin-top:12px"><summary style="cursor:pointer;font-weight:600">${t('fmAnswers')}</summary><div class="fans" style="margin-top:10px">${(f.resume||[]).map(sec=>`<div><h4>${esc(sec.s)}</h4><dl>${(sec.items||[]).map(([a,b])=>`<dt>${esc(a)}</dt><dd>${esc(b)}</dd>`).join('')}</dl></div>`).join('')}
-      ${Object.keys(byCat).length?`<div><h4>${t('fmPhotos')}</h4>${Object.entries(byCat).map(([cat,list])=>`<div class="note" style="margin-top:6px">${esc(cat)}</div><div class="fphotos">${list.filter(x=>(c.fotos||[]).includes(x.fid)).map(x=>mimg(c,x.fid,200,'','data-fv="1"')).join('')}</div>`).join('')}</div>`:''}</div></details>`;
-  }
-  return h+'</section>';
-}
 function renderDetail(soft){
   const c=CASOS.find(x=>x.id===openId);const d=$('#drawer');if(!c){closeDetail();return}
-  if(soft&&d.contains(document.activeElement)&&document.activeElement!==d)return;
+  if(soft&&d.contains(document.activeElement))return;
   const r=recInfo(c);const others=CASOS.filter(x=>x.id!==c.id&&norm(x.cliente)===norm(c.cliente)).sort((a,b)=>String(b.fechaReclamo).localeCompare(String(a.fechaReclamo)));
-  const subj=subjectOf(c);const nH=(c.historial||[]).length;
-  const op=k=>DOPEN.has(k)?'open':'';
-  const editing=!c.diagnostico||DD_EDIT;
-  if(editing&&(!DD||DD.id!==c.id))DD={id:c.id,tipo:c.tipoFinal||c.tipoProv||'pendiente',diag:c.diagnostico||'',sug:c.sugerencia||''};
-  d.innerHTML=`<div class="dhead">
-    <div class="dtitle"><h2>${esc(c.cliente||'—')}</h2>
-      <div class="meta">${c.referencia?`<span class="chip ref">${esc(c.referencia)}</span>`:''}${tipoChip(tipoOf(c))}<span>${fmtD(c.fechaReclamo)}</span>${c.rollos?`<span>${t('rolls',+c.rollos)}${c.formato?t('ofM',c.formato):''}</span>`:''}${c.pedido?`<span>${t('order')} ${esc(c.pedido)}</span>`:''}</div></div>
-    <label class="stsel">${t('status')}<select class="inp" id="d-est">${opts(Object.keys(LABELS.est),c.estado,k=>L('est',k))}</select></label>
-    ${c.estado==='clos'?`<label class="stsel">${t('resolution')}<select class="inp" id="d-res">${opts(['',...Object.keys(LABELS.res)],c.resolucion,k=>k?L('res',k):'—')}</select></label>`:''}
-    <button class="btn icon ghost" id="d-close" aria-label="${esc(t('close'))}">✕</button></div>
-  ${stepper(c)}
+  const subj=subjectOf(c);
+  d.innerHTML=`<div class="dhead"><div style="flex:1;min-width:0"><h2>${esc(c.cliente)} <span class="chip ref">${esc(c.referencia||'—')}</span> ${stChip(c.estado)}</h2>
+    ${subj?`<div class="subj">${t('subject')} : <b>${esc(subj)}</b><button class="btn ghost sm" id="d-copysubj">${t('copySubj')}</button></div>`:''}</div>
+    <span class="meta">${esc(c.id)}</span><button class="btn ghost" id="d-close">${t('close')}</button></div>
   <div class="dbody"><div class="dcols"><div class="dcol">
-   <section class="dsec"><h3><i class="num">1</i>${t('stepProblem')}<button class="btn sm aside" id="d-editdata">${t('editData')}</button></h3>
-     <p class="sum">${esc(resumen(c)||t('noSummary'))}</p>
-     <div class="cinfo"><span>👤 ${c.contacto?esc(c.contacto):`<span class="miss">${t('noContact')}</span>`}</span><span>✉ ${c.email?esc(c.email):`<span class="miss">${t('noEmail')}</span>`}</span><span>🌐 ${esc(L('lng',c.idioma||'fr'))}</span></div>
-     ${subj?`<div class="subj">✉ ${t('subject')} : <b>${esc(subj)}</b><button class="btn ghost sm" id="d-copysubj">${t('copySubj')}</button></div>`:''}
-     ${(c.faltan||[]).length&&c.estado!=='clos'?`<div class="alert"><b>${t('missing')}</b> ${c.faltan.map(esc).join(', ')}</div>`:''}
-     ${r.n>1?`<div class="alert red"><b>${t('nClaimsRef',r.n,esc(c.referencia))}</b> ${r.list.map(x=>fmtD(x.fechaReclamo)).join(', ')}</div>`:''}
-     <div class="photos">${(c.fotos||[]).map((f,i)=>`<div class="ph${i===0?' main':''}">${mimg(c,f,500,'','loading="lazy"')}${i===0?`<span class="tag">★ ${esc(t('mainT'))}</span>`:''}
-       <div class="bar2">${i===0?'<span></span>':`<button data-main="${esc(f)}">${esc(t('setMain'))}</button>`}<button class="del" data-rm="${esc(f)}" aria-label="${esc(t('removeT'))}">🗑</button></div></div>`).join('')}</div>
-     <div class="actrow"><button class="btn sm" id="d-add">${t('addFiles')}</button><input type="file" id="d-files" accept="image/*,application/pdf" multiple hidden><span class="note">${(c.fotos||[]).length} ${t('photos').toLowerCase()}</span></div>
-   </section>
-   ${formSection(c)}
-   <details class="dsec" data-k="mail" ${op('mail')}><summary>✉ ${t('origMail')}</summary>
-     <button class="btn sm" id="d-copymail">📋 ${t('copyMail')}</button><pre class="orig">${esc(c.textoOriginal||'—')}</pre></details>
-   ${others.length?`<details class="dsec" data-k="others" ${op('others')}><summary>${t('otherClaims',esc(c.cliente))} <small>(${others.length})</small></summary><div class="tablewrap"><table><tr><th>${t('date')}</th><th>${t('ref')}</th><th>${t('problemH')}</th><th>${t('status')}</th></tr>${others.map(o=>`<tr data-go="${esc(o.id)}" style="cursor:pointer"><td>${fmtD(o.fechaReclamo)}</td><td>${esc(o.referencia)}</td><td style="white-space:normal">${esc(resumen(o))}</td><td>${stChip(o.estado)}</td></tr>`).join('')}</table></div></details>`:''}
-  </div><div class="dcol">
-   <section class="dsec"><h3><i class="num">3</i>${t('diagT')}${c.diagnostico&&!editing?`<button class="btn sm aside" id="dd-edit">✎ ${t('editDiag')}</button>`:''}</h3>${!editing?`<div class="diagbox"><div class="meta">${tipoChip(c.tipoFinal)}<span>${t('imputable')} : <b>${esc(L('imp',c.imputable))}</b></span></div><div class="d">${esc(c.diagnostico)}</div>${c.sugerencia?`<div class="note">${t('sugg')} : ${esc(c.sugerencia)}</div>`:''}${c.fechaDiag?`<div class="note">${t('diagOn',fmtD(String(c.fechaDiag).slice(0,10)))}</div>`:''}</div>`
-     :`<div style="display:grid;gap:12px">${c.diagnostico?'':`<p class="note" style="margin:0">${t('diagFree')}</p>`}
-       <div class="tstep"><label><i class="num">a</i>${t('cause')}</label><div class="tipos">${TIPOS.map(k=>`<button class="tipo" data-dtp="${k}" aria-pressed="${DD.tipo===k}"><i class="dot" style="background:var(${TCOL[k]})"></i>${esc(L('tipo',k))}</button>`).join('')}</div></div>
-       <div class="tstep"><label><i class="num">b</i>${t('diagLabel')} <small>· ${t('diagSmall')}</small></label><input class="diag" id="dd-diag" placeholder="${esc(t('diagPh'))}" value="${esc(DD.diag)}"></div>
-       <div class="tstep"><label><i class="num">c</i>${t('sugLabel')} <small>· ${t('sugSmall')}</small></label><input class="inp" id="dd-sug" placeholder="${esc(t('sugPh'))}" value="${esc(DD.sug)}"></div>
-       <div class="actrow" style="margin-top:0"><button class="btn primary sm" id="dd-save">${t('saveDiag')}</button>${c.diagnostico?`<button class="btn ghost sm" id="dd-cancel">${t('cancel')}</button>`:''}</div></div>`}</section>
-   <section class="dsec"><h3><i class="num">4</i>${t('reply',L('lng',c.idioma||'fr'))}</h3><textarea class="inp" id="d-resp" style="min-height:150px" placeholder="${esc(t('replyPh'))}">${esc(c.respuestaDraft||'')}</textarea>
-     <div class="actrow"><button class="btn sm primary" id="d-draft">${t('draftAI')}</button><button class="btn sm" id="d-copy">${t('copy')}</button><button class="btn sm" id="d-saveresp">${t('saveText')}</button><span class="aistate" id="d-aist"></span></div></section>
-   <section class="dsec"><h3><i class="num">5</i>${t('followUp')}</h3>
+   <div class="dsec"><h3>${t('photos')} (${(c.fotos||[]).length})</h3><div class="photos">${(c.fotos||[]).map((f,i)=>`<div class="ph${i===0?' main':''}">${mimg(c,f,500,'','loading="lazy"')}${i===0?`<span class="tag">★ ${esc(t('mainT'))}</span>`:''}
+       <div class="bar2">${i===0?'<span></span>':`<button data-main="${esc(f)}">★ ${esc(t('setMain'))}</button>`}<button class="del" data-rm="${esc(f)}" aria-label="${esc(t('removeT'))}">🗑 ${esc(t('removeT'))}</button></div></div>`).join('')}</div>
+     <div style="margin-top:8px"><button class="btn sm" id="d-add">${t('addFiles')}</button><input type="file" id="d-files" accept="image/*,application/pdf" multiple hidden></div></div>
+   <div class="dsec"><h3>${t('followUp')}</h3>
      <div style="display:flex;gap:8px"><input class="inp" id="d-note" placeholder="${esc(t('notePh'))}"><button class="btn primary sm" id="d-addnote">${t('addNote')}</button></div>
      <div class="quick">${t('quick').map(q=>`<button data-q="${esc(q)}">${esc(q)}</button>`).join('')}</div>
-     <ul class="tlist">${timeline(c,showFullHist)}</ul>
-     ${(c.historial||[]).some(e=>!KEY_KINDS.includes(e.kind))?`<button class="btn ghost sm" id="d-hist" style="margin-top:4px">${showFullHist?t('hideAll'):t('showAll',nH)}</button>`:''}</section>
-  </div></div>
-  <details class="dsec" data-k="data" ${op('data')}><summary>${t('caseData')} <small>${t('caseDataHint')}</small></summary>
-    <div class="form" id="d-form">${formHTML(c,'d')}
+     <ul class="tl">${timeline(c,showFullHist)}</ul>
+     ${(c.historial||[]).some(e=>!KEY_KINDS.includes(e.kind))?`<button class="btn ghost sm" id="d-hist" style="margin-top:4px">${showFullHist?t('hideAll'):t('showAll',(c.historial||[]).length)}</button>`:''}
+     <div class="idbox" style="margin-top:10px">${t('idHint')} <code>${esc(c.id)}</code><button class="btn ghost sm" id="d-copyid">${t('copyId')}</button></div></div>
+   ${r.n>1?`<div class="falta"><b>${t('nClaimsRef',r.n,esc(c.referencia))}</b> ${r.list.map(x=>fmtD(x.fechaReclamo)).join(', ')}</div>`:''}
+   ${(c.faltan||[]).length&&c.estado!=='clos'?`<div class="falta"><b>${t('missing')}</b> ${c.faltan.map(esc).join(', ')}</div>`:''}
+   <div class="dsec"><h3>${t('techDiag')}</h3>${c.diagnostico?`<div class="diagbox"><p>${tipoChip(c.tipoFinal)} <span class="meta">${t('imputable')} : ${esc(L('imp',c.imputable))}</span></p><p style="font-size:16px;font-weight:700;margin-top:6px">${esc(c.diagnostico)}</p>${c.sugerencia?`<p class="note">${t('sugg')} : ${esc(c.sugerencia)}</p>`:''}<p class="meta">${c.fechaDiag?new Date(c.fechaDiag).toLocaleString(LANG==='fr'?'fr-FR':'en-GB'):''}</p></div>`:`<p class="note" style="margin:0">${t('noDiag')}</p>`}</div>
+   </div><div class="dcol">
+   <div class="dsec"><h3 style="display:flex;align-items:center;gap:10px">${t('caseData')} <button class="btn sm" id="d-reai">${t('relaunch')}</button><span class="aistate" id="d-reai-st"></span></h3><div style="display:grid;gap:10px" id="d-form">${formHTML(c,'d')}
      <div class="grid2"><div class="field"><label>${t('resolution')}</label><select class="inp" data-k="resolucion">${opts(['',...Object.keys(LABELS.res)],c.resolucion,k=>k?L('res',k):'—')}</select></div></div></div>
-    <div class="actrow"><button class="btn primary sm" id="d-save">${t('saveChanges')}</button><button class="btn sm" id="d-reai">${t('relaunch')}</button><span class="aistate" id="d-reai-st"></span></div></details>
-  <div class="infos"><span>${t('idHint')} <code>${esc(c.id)}</code></span><button class="btn ghost sm" id="d-copyid">${t('copyId')}</button>
-    ${c.carpetaUrl?`<a class="btn sm" href="${esc(c.carpetaUrl)}" target="_blank" rel="noopener">${t('openDrive')}</a>`:''}
-    ${c.enviadoProveedor?`<span>✓ ${t('sentOn',fmtD(c.enviadoProveedor))}</span>`:''}</div>
+     <div style="margin-top:10px"><button class="btn primary sm" id="d-save">${t('saveChanges')}</button></div></div>
+   <div class="dsec"><h3>${t('reply',L('lng',c.idioma||'fr'))}</h3><textarea class="inp" id="d-resp" style="min-height:150px" placeholder="${esc(t('replyPh'))}">${esc(c.respuestaDraft||'')}</textarea>
+     <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;align-items:center"><button class="btn sm" id="d-draft">${t('draftAI')}</button><button class="btn sm" id="d-copy">${t('copy')}</button><button class="btn sm" id="d-saveresp">${t('saveText')}</button><span class="aistate" id="d-aist"></span></div></div>
+   ${others.length?`<div class="dsec"><h3>${t('otherClaims',esc(c.cliente))}</h3><div class="tablewrap"><table><tr><th>${t('date')}</th><th>${t('ref')}</th><th>${t('problemH')}</th><th>${t('status')}</th></tr>${others.map(o=>`<tr data-go="${esc(o.id)}" style="cursor:pointer"><td>${fmtD(o.fechaReclamo)}</td><td>${esc(o.referencia)}</td><td>${esc(resumen(o))}</td><td>${esc(L('est',o.estado))}</td></tr>`).join('')}</table></div></div>`:''}
+   <div class="dsec"><h3>${t('backup')}</h3>${c.carpetaUrl?`<a class="btn sm" href="${esc(c.carpetaUrl)}" target="_blank" rel="noopener">${t('openDrive')}</a>`:''}</div>
+   ${c.enviadoProveedor?`<p class="note">${t('sentOn',fmtD(c.enviadoProveedor))}</p>`:''}
+  </div></div>
+  <div class="dsec"><div class="ohead"><h3>${t('origMail')}</h3><button class="btn sm" id="d-copymail">📋 ${t('copyMail')}</button></div><pre class="orig">${esc(c.textoOriginal||'—')}</pre></div>
   </div>`;
   hydrate(d);
-  d.querySelectorAll('details[data-k]').forEach(x=>x.ontoggle=()=>{x.open?DOPEN.add(x.dataset.k):DOPEN.delete(x.dataset.k)});
   $('#d-close').onclick=closeDetail;
-  if($('#d-res'))$('#d-res').onchange=async e=>{const v=e.target.value;e.target.blur();
-    try{await update(c.id,{resolucion:v},v?'Résolution : '+LABELS.res[v][0]:'Résolution effacée');toast(t('changesSaved'))}catch(_){toast(t('errSave'));renderDetail()}};
-  $('#d-editdata').onclick=()=>{const det=d.querySelector('details[data-k="data"]');det.open=true;DOPEN.add('data');
-    det.scrollIntoView({behavior:'smooth',block:'start'});setTimeout(()=>(d.querySelector('#d-form [data-k="'+(c.contacto&&c.email?'resumeFr':!c.email?'email':'contacto')+'"]')||{}).focus?.({preventScroll:true}),400)};
-  if($('#d-fask'))$('#d-fask').onclick=()=>openFormModal(c);
-  if($('#d-flink'))$('#d-flink').onclick=async()=>{try{await navigator.clipboard.writeText(formUrl(formOf(c).token));toast(t('copied'))}catch(_){}};
-  d.querySelectorAll('img[data-fv]').forEach(i=>i.onclick=()=>openViewer(c.id,[...d.querySelectorAll('img[data-fv]')].map(x=>x.dataset.fid),[...d.querySelectorAll('img[data-fv]')].indexOf(i)));
-  $('#d-est').onchange=async e=>{const v=e.target.value;e.target.blur();
-    try{await update(c.id,{estado:v},'Statut : '+LABELS.est[v][0]);toast(t('statusSaved'))}catch(_){toast(t('errSave'));renderDetail()}};
-  if($('#dd-edit'))$('#dd-edit').onclick=()=>{DD_EDIT=true;DD=null;renderDetail();$('#dd-diag')?.focus()};
-  if(editing){
-    d.querySelectorAll('[data-dtp]').forEach(b=>b.onclick=()=>{DD.tipo=b.dataset.dtp;d.querySelectorAll('[data-dtp]').forEach(x=>x.setAttribute('aria-pressed',x===b));$('#dd-diag').focus()});
-    $('#dd-diag').oninput=e=>DD.diag=e.target.value;$('#dd-sug').oninput=e=>DD.sug=e.target.value;
-    const saveDD=async()=>{if(!DD.diag.trim()){$('#dd-diag').focus();toast(t('writeDiag'));return}
-      const wasDone=!!c.diagnostico;document.activeElement.blur();$('#dd-save').disabled=true;
-      try{await update(c.id,{tipoFinal:DD.tipo,imputable:IMP[DD.tipo],diagnostico:DD.diag.trim(),sugerencia:DD.sug.trim(),fechaDiag:new Date().toISOString(),estado:c.estado==='analyse'?'diagnostique':c.estado},(wasDone?'Diagnostic modifié : ':'Diagnostic : ')+DD.diag.trim());
-        DD=null;DD_EDIT=false;renderDetail();toast(t('saved'))}
-      catch(_){toast(t('errSave'));$('#dd-save').disabled=false}};
-    $('#dd-save').onclick=saveDD;
-    [$('#dd-diag'),$('#dd-sug')].forEach(i=>i.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();saveDD()}});
-    if($('#dd-cancel'))$('#dd-cancel').onclick=()=>{DD=null;DD_EDIT=false;renderDetail()};
-  }
   d.querySelectorAll('[data-rm]').forEach(b=>b.onclick=async e=>{e.stopPropagation();if(!confirm(t('removeQ')))return;const fid=b.dataset.rm;b.closest('.ph').style.opacity=.3;
     try{const nc=await api('removeFile',{id:c.id,fid,logo:true});const i=CASOS.findIndex(x=>x.id===c.id);CASOS[i]=nc;renderDetail();renderList();toast(t('removed'))}catch(err){b.closest('.ph').style.opacity=1;toast(t('errSave')+' : '+err.message)}});
   d.querySelectorAll('[data-main]').forEach(b=>b.onclick=async e=>{e.stopPropagation();b.disabled=true;
@@ -1064,9 +722,9 @@ function renderDetail(soft){
   $('#d-reai').onclick=async()=>{const b=$('#d-reai');b.disabled=true;$('#d-reai-st').innerHTML=`<i class="spin"></i> ${t('relaunching')}`;
     try{const nc=await api('reanalyze',{id:c.id});const i=CASOS.findIndex(x=>x.id===c.id);CASOS[i]=nc;document.activeElement.blur();renderDetail();renderAll();toast(t('relaunched'))}
     catch(e){$('#d-reai-st').textContent=t('aiFail')+' ('+e.message+')';b.disabled=false}};
-  d.querySelectorAll('.photos img').forEach(i=>i.onclick=()=>openViewer(c.id,c.fotos,(c.fotos||[]).indexOf(i.dataset.fid)));
+  d.querySelectorAll('.photos img').forEach(i=>i.onclick=()=>{if(!i.src)return;lightbox(i.src);getMedia(i.dataset.case,i.dataset.fid,1600).then(u=>{if(u&&u!=='GONE'&&!$('#lb').hidden)$('#lb').querySelector('img').src=u}).catch(()=>{})});
   d.querySelectorAll('[data-go]').forEach(tr=>tr.onclick=()=>openDetail(tr.dataset.go));
-  $('#d-save').onclick=async()=>{const v=readForm($('#d-form'));const ch=[];if(v.resolucion&&v.resolucion!==c.resolucion)ch.push('Résolution : '+LABELS.res[v.resolucion][0]);
+  $('#d-save').onclick=async()=>{const v=readForm($('#d-form'));const ch=[];if(v.estado!==c.estado)ch.push('Statut : '+L('est',v.estado));if(v.resolucion&&v.resolucion!==c.resolucion)ch.push('Résolution : '+L('res',v.resolucion));
     try{document.activeElement.blur();await update(c.id,v,ch.join(', ')||'Données modifiées');toast(t('changesSaved'))}catch(e){toast(t('errSave'))}};
   $('#d-copy').onclick=async()=>{try{await navigator.clipboard.writeText($('#d-resp').value);toast(t('copied'))}catch(_){$('#d-resp').select()}};
   $('#d-saveresp').onclick=async()=>{try{document.activeElement.blur();await update(c.id,{respuestaDraft:$('#d-resp').value});toast(t('textSaved'))}catch(_){toast(t('errSave'))}};
@@ -1076,204 +734,33 @@ function renderDetail(soft){
   $('#d-files').onchange=async e=>{const list=[];for(const f of e.target.files){if(f.type==='application/pdf')list.push({blob:f,mime:f.type,name:f.name});else if(f.type.startsWith('image/'))list.push({blob:await toJpeg(f),mime:'image/jpeg',name:f.name})}
     if(!list.length)return;toast(t('saving'));try{const nc=await api('addFiles',{id:c.id,files:await filesPayload(list)});const i=CASOS.findIndex(x=>x.id===c.id);CASOS[i]=nc;renderDetail()}catch(_){toast(t('errSave'))}};
 }
-/* ============ demander le formulaire au client ============ */
-const FM_MSG={
- fr:{s:'Votre réclamation',b:(n,l,id)=>`Bonjour${n?' '+n:''},
+function lightbox(src){$('#lb').querySelector('img').src=src;$('#lb').hidden=false}
+$('#lb').onclick=()=>$('#lb').hidden=true;
 
-Merci de nous avoir contactés. Afin de pouvoir étudier votre réclamation, merci de compléter le formulaire en ligne ci-dessous, avec les photos demandées :
-
-${l}
-
-Vous pouvez l’enregistrer et le terminer plus tard avec le même lien.
-
-Important : aucune demande ne peut être traitée tant que le formulaire n’est pas complet. L’ouverture d’un dossier ne vaut pas acceptation de la prise en charge au titre de la garantie.
-
-Référence de votre dossier : ${id}
-
-Cordialement,`},
- es:{s:'Su reclamación',b:(n,l,id)=>`Hola${n?' '+n:''}:
-
-Gracias por escribirnos. Para poder atender su reclamación, le rogamos que rellene el siguiente formulario en línea, con las fotos solicitadas:
-
-${l}
-
-Puede guardarlo y terminarlo más tarde con el mismo enlace.
-
-Importante: ninguna solicitud puede ser procesada hasta que el formulario esté completo. La apertura de un expediente no implica la aceptación de la cobertura por garantía.
-
-Referencia de su expediente: ${id}
-
-Un saludo,`},
- en:{s:'Your claim',b:(n,l,id)=>`Hello${n?' '+n:''},
-
-Thank you for contacting us. So that we can review your claim, please fill in the online form below, with the requested photos:
-
-${l}
-
-You can save it and finish later with the same link.
-
-Important: no request can be processed until the form is complete. Opening a case does not mean the claim is accepted under the warranty.
-
-Your case reference: ${id}
-
-Kind regards,`},
- it:{s:'Il vostro reclamo',b:(n,l,id)=>`Buongiorno${n?' '+n:''},
-
-grazie per averci contattato. Per poter esaminare il vostro reclamo, vi preghiamo di compilare il modulo online qui sotto, con le foto richieste:
-
-${l}
-
-Potete salvarlo e completarlo più tardi con lo stesso link.
-
-Importante: nessuna richiesta può essere elaborata finché il modulo non è completo. L’apertura di una pratica non comporta l’accettazione della copertura in garanzia.
-
-Riferimento della pratica: ${id}
-
-Cordiali saluti,`},
- pt:{s:'A sua reclamação',b:(n,l,id)=>`Olá${n?' '+n:''},
-
-Obrigado pelo seu contacto. Para podermos analisar a sua reclamação, pedimos que preencha o formulário online abaixo, com as fotos solicitadas:
-
-${l}
-
-Pode guardá-lo e terminá-lo mais tarde com o mesmo link.
-
-Importante: nenhum pedido pode ser tratado enquanto o formulário não estiver completo. A abertura de um processo não implica a aceitação da cobertura pela garantia.
-
-Referência do seu processo: ${id}
-
-Cumprimentos,`},
- de:{s:'Ihre Reklamation',b:(n,l,id)=>`Guten Tag${n?' '+n:''},
-
-vielen Dank für Ihre Nachricht. Damit wir Ihre Reklamation prüfen können, füllen Sie bitte das folgende Online-Formular mit den angeforderten Fotos aus:
-
-${l}
-
-Sie können es speichern und später mit demselben Link fertigstellen.
-
-Wichtig: Eine Anfrage kann erst bearbeitet werden, wenn das Formular vollständig ist. Die Eröffnung eines Vorgangs bedeutet keine Anerkennung eines Garantieanspruchs.
-
-Ihre Vorgangsnummer: ${id}
-
-Mit freundlichen Grüßen`}
-};
-let FM={c:null,form:null,marked:false};
-async function openFormModal(c){
-  FM={c,form:formOf(c),marked:false};
-  const lang=FM_MSG[c.idioma]?c.idioma:'fr';
-  $('#mf-lang').innerHTML=Object.keys(FM_MSG).map(k=>`<option value="${k}" ${k===lang?'selected':''}>${esc(L('lng',k)||k)}</option>`).join('');
-  $('#mf-to').value=c.email||'';$('#mf-msg').value='';$('#m-form').hidden=false;
-  await fmLink(lang);
-}
-async function fmLink(lang,mark){
-  $('#mf-st').innerHTML=`<i class="spin"></i> ${t('loading')}`;
-  try{
-    const r=await api('formLink',{id:FM.c.id,lang:['fr','es','en','it'].includes(lang)?lang:'en',mark:!!mark});
-    FM.form=r.form;FORMS[FM.c.id]=r.form;FORMS_OK=true;
-    if(r.caso){const i=CASOS.findIndex(x=>x.id===FM.c.id);if(i>=0)CASOS[i]=r.caso;FM.c=r.caso}
-    if(!mark)fmFill(lang);
-    $('#mf-st').textContent='';return true;
-  }catch(e){$('#mf-st').textContent=(e.message==='action inconnue'?t('fmNotReady'):t('errSave')+' : '+e.message);return false}
-}
-function fmFill(lang){
-  const m=FM_MSG[lang]||FM_MSG.fr;const c=FM.c;const name=String(c.contacto||'').trim().split(/\s+/)[0]||'';
-  const sj=subjectOf(c);
-  $('#mf-subj').value=`${m.s} – ${sj?sj+' – ':''}[${c.id}]`;
-  $('#mf-msg').value=m.b(name,formUrl(FM.form.token),c.id);
-}
-$('#mf-lang').onchange=e=>fmLink(e.target.value);
-async function fmMark(){
-  const em=$('#mf-to').value.trim();
-  if(em&&/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)&&em!==(FM.c.email||'')){try{FM.c=await update(FM.c.id,{email:em},'Email corrigé : '+em);toast(t('emailSaved'))}catch(_){}}
-  if(FM.marked)return;FM.marked=true;if(await fmLink($('#mf-lang').value,true)){toast(t('fmMarked'));renderAll()}else FM.marked=false}
-$('#mf-copy').onclick=async()=>{try{await navigator.clipboard.writeText($('#mf-msg').value);toast(t('copied'))}catch(_){$('#mf-msg').select();document.execCommand('copy')}fmMark()};
-$('#mf-mail').onclick=()=>{
-  const href=`mailto:${$('#mf-to').value.trim().replace(/[^\w.@+,;-]/g,'')}?subject=${encodeURIComponent($('#mf-subj').value)}&body=${encodeURIComponent($('#mf-msg').value)}`;
-  const a=document.createElement('a');a.href=href;a.click();fmMark();
-};
-
-/* ============ visionneuse photo (zoom jusqu'à 30× la taille réelle) ============ */
-const LB={caseId:null,fids:[],i:0,tok:0};
-const V={s:1,x:0,y:0,w:0,h:0,fit:true};
-const lbImg=$('#lb-img'), lbStage=$('#lb-stage');
-const ZMAX=30;
-const fitS=()=>V.w?Math.min(lbStage.clientWidth/V.w,lbStage.clientHeight/V.h,1):1;
-const minS=()=>fitS(), maxS=()=>Math.max(ZMAX,fitS()*40);
-function lbApply(){
-  const W=lbStage.clientWidth,H=lbStage.clientHeight,iw=V.w*V.s,ih=V.h*V.s;
-  V.x=iw<=W?(W-iw)/2:Math.min(0,Math.max(W-iw,V.x));
-  V.y=ih<=H?(H-ih)/2:Math.min(0,Math.max(H-ih,V.y));
-  lbImg.style.transform=`translate(${V.x}px,${V.y}px) scale(${V.s})`;
-  lbImg.classList.toggle('px',V.s>=3);
-  $('#lb-zoom').textContent=Math.round(V.s*100)+' %';
-  const lo=Math.log(minS()),hi=Math.log(maxS());$('#lb-range').value=Math.round((Math.log(V.s)-lo)/(hi-lo||1)*1000);
-}
-function lbFit(){V.s=fitS();V.fit=true;lbApply()}
-function zoomAt(ns,cx,cy){
-  if(cx==null){cx=lbStage.clientWidth/2;cy=lbStage.clientHeight/2}
-  ns=Math.min(maxS(),Math.max(minS(),ns));
-  V.x=cx-(cx-V.x)*ns/V.s;V.y=cy-(cy-V.y)*ns/V.s;V.s=ns;V.fit=ns<=fitS()+1e-6;lbApply();
-}
-lbImg.onload=()=>{const w=lbImg.naturalWidth,h=lbImg.naturalHeight;if(!w)return;
-  if(!V.w||V.fit){V.w=w;V.h=h;lbFit()}else{V.s*=V.w/w;V.w=w;V.h=h;lbApply()}};
-function lbShow(){
-  const fid=LB.fids[LB.i],tok=++LB.tok;const n=LB.fids.length;
-  $('#lb-count').textContent=n>1?`${LB.i+1} / ${n}`:'';$('#lb-prev').hidden=$('#lb-next').hidden=n<2;
-  V.w=0;V.fit=true;
-  const pre=[0,1600,500,200].map(s=>MEDIA.get(fid+'@'+s)).find(u=>u&&u!=='GONE');
-  if(pre)lbImg.src=pre;else lbImg.removeAttribute('src');
-  const q=$('#lb-q');
-  if(MEDIA.get(fid+'@0')&&MEDIA.get(fid+'@0')!=='GONE'){q.textContent=t('hd');q.classList.add('hd');return}
-  q.textContent=t('hdLoading');q.classList.remove('hd');
-  getMedia(LB.caseId,fid,0).then(u=>{if(tok!==LB.tok||$('#lb').hidden)return;if(u&&u!=='GONE'){lbImg.src=u;q.textContent=t('hd');q.classList.add('hd')}else q.textContent=''}).catch(()=>{if(tok===LB.tok)q.textContent=''});
-}
-function openViewer(caseId,fids,i){LB.caseId=caseId;LB.fids=(fids||[]).slice();LB.i=Math.max(0,i||0);if(!LB.fids.length)return;$('#lb').hidden=false;lbShow()}
-function closeViewer(){$('#lb').hidden=true;LB.tok++}
-function lbGo(d){const n=LB.fids.length;if(n<2)return;LB.i=(LB.i+d+n)%n;lbShow()}
-$('#lb-close').onclick=closeViewer;$('#lb-prev').onclick=()=>lbGo(-1);$('#lb-next').onclick=()=>lbGo(1);
-$('#lb-in').onclick=()=>zoomAt(V.s*1.6);$('#lb-out').onclick=()=>zoomAt(V.s/1.6);
-$('#lb-fit').onclick=lbFit;$('#lb-1').onclick=()=>zoomAt(1);
-$('#lb-range').oninput=e=>{const lo=Math.log(minS()),hi=Math.log(maxS());zoomAt(Math.exp(lo+(hi-lo)*e.target.value/1000))};
-lbStage.addEventListener('wheel',e=>{e.preventDefault();const r=lbStage.getBoundingClientRect();zoomAt(V.s*Math.exp(-e.deltaY*(e.ctrlKey?0.01:0.0022)),e.clientX-r.left,e.clientY-r.top)},{passive:false});
-lbStage.addEventListener('dblclick',e=>{const r=lbStage.getBoundingClientRect();const cx=e.clientX-r.left,cy=e.clientY-r.top;
-  if(V.s<fitS()*2.5)zoomAt(Math.max(fitS()*4,1),cx,cy);else lbFit()});
-{const P=new Map();let pinch=null,moved=false,start=null,downOnBg=false;
- const pos=e=>{const r=lbStage.getBoundingClientRect();return{x:e.clientX-r.left,y:e.clientY-r.top}};
- lbStage.addEventListener('pointerdown',e=>{if(!P.size)downOnBg=e.target===lbStage;lbStage.setPointerCapture(e.pointerId);P.set(e.pointerId,pos(e));if(P.size===1){moved=false;start=pos(e)}
-   if(P.size===2){const[a,b]=[...P.values()];pinch={d:Math.hypot(a.x-b.x,a.y-b.y)||1,s:V.s,mx:(a.x+b.x)/2,my:(a.y+b.y)/2}}lbStage.classList.add('drag')});
- lbStage.addEventListener('pointermove',e=>{if(!P.has(e.pointerId))return;const prev=P.get(e.pointerId),cur=pos(e);P.set(e.pointerId,cur);
-   if(P.size===1&&!pinch){V.x+=cur.x-prev.x;V.y+=cur.y-prev.y;if(Math.abs(cur.x-start.x)+Math.abs(cur.y-start.y)>5)moved=true;lbApply()}
-   else if(P.size===2&&pinch){const[a,b]=[...P.values()];moved=true;const mx=(a.x+b.x)/2,my=(a.y+b.y)/2;
-     V.x+=mx-pinch.mx;V.y+=my-pinch.my;pinch.mx=mx;pinch.my=my;zoomAt(pinch.s*Math.hypot(a.x-b.x,a.y-b.y)/pinch.d,mx,my)}});
- const up=e=>{P.delete(e.pointerId);if(P.size<2)pinch=null;if(!P.size){lbStage.classList.remove('drag');
-   if(!moved&&e.type==='pointerup'&&downOnBg&&V.fit)closeViewer()}};
- lbStage.addEventListener('pointerup',up);lbStage.addEventListener('pointercancel',up);}
-addEventListener('resize',()=>{if(!$('#lb').hidden){V.fit?lbFit():lbApply()}});
-
-/* ============ technicien ============ */
-const pendientes=()=>CASOS.filter(c=>c.estado==='analyse').sort((a,b)=>String(a.creado).localeCompare(String(b.creado)));
-const diagnosed=()=>CASOS.filter(c=>c.diagnostico&&c.estado!=='analyse').sort((a,b)=>String(b.fechaDiag).localeCompare(String(a.fechaDiag)));
+/* ============ technician ============ */
+const svcOk=c=>{const sv=$('#f-svc').value;return !sv||svcOf(c)===sv};
+const pendientes=()=>CASOS.filter(c=>c.estado==='analyse'&&svcOk(c)).sort((a,b)=>String(a.creado).localeCompare(String(b.creado)));
+const diagnosed=()=>CASOS.filter(c=>c.diagnostico&&c.estado!=='analyse'&&svcOk(c)).sort((a,b)=>String(b.fechaDiag).localeCompare(String(a.fechaDiag)));
 let techMode='todo';
 function setTechMode(m){techMode=m;techDraft={};$('#tm-todo').setAttribute('aria-pressed',m==='todo');$('#tm-done').setAttribute('aria-pressed',m==='done');$('#feed-cards').innerHTML='';window.scrollTo(0,0);renderTech(true)}
 $('#tm-todo').onclick=()=>setTechMode('todo');$('#tm-done').onclick=()=>setTechMode('done');
 function updatePendBadge(){const n=pendientes().length;$('#n-pend').textContent=n;$('#n-pend').hidden=!n}
 function techCardHTML(c){
   const dr=techDraft[c.id]||(techDraft[c.id]={tipo:c.tipoFinal||c.tipoProv||'pendiente',diag:techMode==='done'?(c.diagnostico||''):'',sug:techMode==='done'?(c.sugerencia||''):'',foto:0});const f=c.fotos||[];
-  return `<div class="tphoto">${f.length?`<span class="tcounter">📷 ${dr.foto+1} / ${f.length}</span><div class="big">${mimg(c,f[dr.foto]||f[0],1600)}</div>
+  return `<div class="tphoto">${f.length?`<span class="tcounter">${dr.foto+1} / ${f.length}</span><div class="big">${mimg(c,f[dr.foto]||f[0],1600)}</div>
     ${f.length>1?`<div class="tstrip">${f.map((id,i)=>mimg(c,id,200,i===dr.foto?'on':'',`data-i="${i}"`)).join('')}</div>`:''}`:`<div class="big"><div class="noimg">${t('noPhoto')}</div></div>`}</div>
   <div class="tinfo"><div>${c._n?`<span class="tnum">${t('caseN',c._n,c._of)}</span>`:''}<p class="who">${esc(c.cliente)}</p><div class="meta" style="margin-top:6px">${c.referencia?`<span class="chip ref">${esc(c.referencia)}</span>`:''}${c.rollos?`<span>${t('rolls',+c.rollos)}${c.formato?t('ofM',c.formato):''}</span>`:''}${c.sintoma?`<span>${esc(L('sint',c.sintoma))}</span>`:''}<span>${fmtD(c.fechaReclamo)}</span></div></div>
    <p class="sum">${esc(resumen(c)||t('noSummary'))}</p>
-   ${(f=>f&&f.statut==='soumis'?`<details class="fbox"><summary style="cursor:pointer;font-weight:600">📝 ${t('fmAnswers')}</summary><div class="fans" style="margin-top:8px">${(f.resume||[]).filter(sec=>sec.items&&sec.items.length).map(sec=>`<div><h4>${esc(sec.s)}</h4><dl>${sec.items.map(([a,b])=>`<dt>${esc(a)}</dt><dd>${esc(b)}</dd>`).join('')}</dl></div>`).join('')}</div></details>`:'')(formOf(c))}
    ${techMode==='done'&&c.fechaDiag?`<div class="donebox">✓ ${t('diagOn',fmtD(String(c.fechaDiag).slice(0,10)))} · ${esc(L('est',c.estado))}</div>`:''}
-   <div class="tstep"><label><i class="num">1</i>${t('cause')}</label><div class="tipos">${TIPOS.map(k=>`<button class="tipo" data-tp="${k}" aria-pressed="${dr.tipo===k}"><i class="dot" style="background:var(${TCOL[k]})"></i>${esc(L('tipo',k))}</button>`).join('')}</div></div>
-   <div class="tstep"><label><i class="num">2</i>${t('diagLabel')} <small>· ${t('diagSmall')}</small></label><input class="diag" data-f="diag" placeholder="${esc(t('diagPh'))}" value="${esc(dr.diag)}"></div>
-   <div class="tstep"><label><i class="num">3</i>${t('sugLabel')} <small>· ${t('sugSmall')}</small></label><input class="inp" data-f="sug" placeholder="${esc(t('sugPh'))}" value="${esc(dr.sug)}"></div>
-   <div class="tactions"><button class="btn primary" data-a="save">${techMode==='done'?t('update'):t('saveNext')} ↵</button>${techMode==='todo'?`<button class="btn" data-a="info">${t('askInfo')}</button>`:''}<div class="spacer"></div><button class="btn ghost" data-a="det">${t('details')} →</button></div></div>`;
+   <div><div class="hint" style="margin-bottom:5px">${t('cause')}</div><div class="tipos">${TIPOS.map(k=>`<button class="tipo" data-tp="${k}" aria-pressed="${dr.tipo===k}"><i class="dot" style="background:var(${TCOL[k]})"></i>${esc(L('tipo',k))}</button>`).join('')}</div></div>
+   <input class="diag" data-f="diag" placeholder="${esc(t('diagPh'))}" value="${esc(dr.diag)}">
+   <input class="inp" data-f="sug" placeholder="${esc(t('sugPh'))}" value="${esc(dr.sug)}">
+   <div class="tactions"><button class="btn primary" data-a="save">${techMode==='done'?t('update'):t('saveNext')}</button>${techMode==='todo'?`<button class="btn" data-a="info">${t('askInfo')}</button>`:''}<button class="btn ghost" data-a="det">${t('details')}</button></div></div>`;
 }
 function bindTechCard(el,c){
   const dr=techDraft[c.id];hydrate(el);
   el.querySelectorAll('.tstrip img').forEach(i=>i.onclick=()=>{dr.foto=+i.dataset.i;el.innerHTML=techCardHTML(c);bindTechCard(el,c)});
-  const big=el.querySelector('.big img');if(big)big.onclick=()=>openViewer(c.id,c.fotos,dr.foto);
+  const big=el.querySelector('.big img');if(big)big.onclick=()=>big.src&&lightbox(big.src);
   el.querySelectorAll('.tipo').forEach(b=>b.onclick=()=>{dr.tipo=b.dataset.tp;el.querySelectorAll('.tipo').forEach(x=>x.setAttribute('aria-pressed',x===b));el.querySelector('[data-f="diag"]').focus()});
   el.querySelectorAll('[data-f]').forEach(i=>{i.oninput=()=>dr[i.dataset.f]=i.value;i.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();saveTech(c,el)}}});
   el.querySelector('[data-a="save"]').onclick=()=>saveTech(c,el);
@@ -1294,7 +781,7 @@ async function saveTech(c,el){
 function renderTech(force){
   const wrap=$('#feed-cards');const done=techMode==='done';const list=done?diagnosed():pendientes();
   $('#feed-title').textContent=done?t('doneN',list.length):(list.length?t('pendingN',list.length):t('pendingT'));
-  if(!list.length){wrap.innerHTML=`<div class="empty-state"><strong>${done?t('nothingDone'):t('nothing')}</strong><span>${done?t('nothingDoneHint'):t('nothingHint')}</span></div>`;return}
+  if(!list.length){wrap.innerHTML=`<div style="padding:40px 20px"><div class="empty-state"><strong>${done?t('nothingDone'):t('nothing')}</strong>${done?t('nothingDoneHint'):t('nothingHint')}</div></div>`;return}
   if(wrap.querySelector('.empty-state'))wrap.innerHTML='';
   const ids=new Set(list.map(c=>c.id));
   wrap.querySelectorAll('.tcard').forEach(el=>{if(!ids.has(el.dataset.id))el.remove()});
@@ -1308,33 +795,29 @@ function renderTech(force){
   });
 }
 
-/* ============ statistiques & exports ============ */
-const periodSet=()=>{const d1=$('#s-d1').value,d2=$('#s-d2').value;return CASOS.filter(c=>(!d1||String(c.fechaReclamo)>=d1)&&(!d2||String(c.fechaReclamo)<=d2))};
-/* dossiers exportés pour le fournisseur = période + cases à cocher */
-const statSet=()=>{const imp=$('#s-imp').checked,ns=$('#s-nosent').checked;return periodSet().filter(c=>(!imp||impOf(c)==='fournisseur')&&(!ns||!c.enviadoProveedor))};
-['#s-d1','#s-d2','#s-imp','#s-nosent'].forEach(s=>$(s).addEventListener('input',renderStats));
-const hbar=(v,max)=>`<div class="hbar" style="width:${Math.max(4,v/Math.max(1,max)*100)}%"></div>`;
+/* ============ stats & exports ============ */
+const statSet=()=>{const sv=$('#s-svc').value,d1=$('#s-d1').value,d2=$('#s-d2').value,imp=$('#s-imp').checked,ns=$('#s-nosent').checked;
+  return CASOS.filter(c=>(!sv||svcOf(c)===sv)&&(!d1||String(c.fechaReclamo)>=d1)&&(!d2||String(c.fechaReclamo)<=d2)&&(!imp||impOf(c)==='fournisseur')&&(!ns||!c.enviadoProveedor))};
+['#s-svc','#s-d1','#s-d2','#s-imp','#s-nosent'].forEach(s=>$(s).addEventListener('input',renderStats));
 function renderStats(){
-  const S=periodSet();const rollos=S.reduce((a,c)=>a+(+c.rollos||0),0),m=S.reduce((a,c)=>a+metros(c),0);
-  const open=S.filter(c=>c.estado==='analyse'||c.estado==='attente').length;
-  $('#kpis').innerHTML=[[S.length,'kClaims'],[rollos,'kRolls'],[m.toLocaleString(LANG==='fr'?'fr-FR':'en-GB'),'kMeters'],[S.filter(c=>impOf(c)==='fournisseur').length,'kSupplier'],[open,'kOpen',open?'warn':'']].map(([n,k,cl])=>`<div class="kpi ${cl||''}"><b>${n}</b><span>${t(k)}</span></div>`).join('');
-  const n=statSet().length;$('#sup-count').textContent=t('supN',n);
+  const S=statSet();const rollos=S.reduce((a,c)=>a+(+c.rollos||0),0),m=S.reduce((a,c)=>a+metros(c),0);
+  $('#kpis').innerHTML=[[S.length,'kClaims'],[rollos,'kRolls'],[m,'kMeters'],[S.filter(c=>impOf(c)==='fournisseur').length,'kSupplier'],[S.filter(c=>c.estado==='analyse'||c.estado==='attente').length,'kOpen']].map(([n,k])=>`<div class="kpi"><b>${n}</b><span>${t(k)}</span></div>`).join('');
   $('#legend').innerHTML=TIPOS.map(k=>`<span><i style="background:var(${TCOL[k]})"></i>${esc(L('tipo',k))}</span>`).join('');
   const by={};S.forEach(c=>{const k=c.referencia||'—';const o=by[k]||(by[k]={c:0,r:0,m:0,t:{}});o.c++;o.r+=+c.rollos||0;o.m+=metros(c);const tk=tipoOf(c);o.t[tk]=(o.t[tk]||0)+(+c.rollos||1)});
   const rows=Object.entries(by).sort((a,b)=>b[1].r-a[1].r);const max=Math.max(1,...rows.map(([,o])=>Object.values(o.t).reduce((a,b)=>a+b,0)));
-  $('#t-ref').innerHTML=rows.length?`<tr><th>${t('ref')}</th><th class="n">${t('cases')}</th><th class="n">${t('rollsH')}</th><th class="n">${t('metersH')}</th><th style="width:40%">${t('byType')}</th></tr>`+
-    rows.map(([k,o])=>`<tr><td><b>${esc(k)}</b></td><td class="n">${o.c}</td><td class="n">${o.r}</td><td class="n">${o.m}</td><td><div class="bar" style="width:${Math.max(8,Object.values(o.t).reduce((a,b)=>a+b,0)/max*100)}%" title="${esc(TIPOS.filter(x=>o.t[x]).map(x=>L('tipo',x)+' : '+o.t[x]).join(' · '))}">${TIPOS.map(x=>o.t[x]?`<i style="flex:${o.t[x]};background:var(${TCOL[x]})"></i>`:'').join('')}</div></td></tr>`).join(''):`<tr><td class="note">${t('noData')}</td></tr>`;
-  const bs={};S.forEach(c=>{const k=c.sintoma||'';bs[k]=(bs[k]||0)+1});const bsE=Object.entries(bs).sort((a,b)=>b[1]-a[1]);const bsM=Math.max(1,...bsE.map(x=>x[1]));
-  $('#t-sint').innerHTML=S.length?`<tr><th>${t('symptom')}</th><th class="n">${t('cases')}</th><th style="width:40%"></th></tr>`+bsE.map(([k,n])=>`<tr><td>${esc(k?L('sint',k):'—')}</td><td class="n">${n}</td><td>${hbar(n,bsM)}</td></tr>`).join(''):`<tr><td class="note">${t('noData')}</td></tr>`;
+  $('#t-ref').innerHTML=rows.length?`<tr><th>${t('ref')}</th><th class="num">${t('cases')}</th><th class="num">${t('rollsH')}</th><th class="num">${t('metersH')}</th>${TIPOS.map(k=>`<th class="num">${esc(L('tipo',k).split(' /')[0])}</th>`).join('')}<th>${t('byType')}</th></tr>`+
+    rows.map(([k,o])=>`<tr><td><b>${esc(k)}</b></td><td class="num">${o.c}</td><td class="num">${o.r}</td><td class="num">${o.m}</td>${TIPOS.map(x=>`<td class="num">${o.t[x]||''}</td>`).join('')}<td style="min-width:180px"><div class="bar" style="width:${Math.max(15,Object.values(o.t).reduce((a,b)=>a+b,0)/max*100)}%">${TIPOS.map(x=>o.t[x]?`<i style="flex:${o.t[x]};background:var(${TCOL[x]})"></i>`:'').join('')}</div></td></tr>`).join(''):`<tr><td class="note">${t('noData')}</td></tr>`;
+  const bs={};S.forEach(c=>{const k=c.sintoma||'';bs[k]=(bs[k]||0)+1});
+  $('#t-sint').innerHTML=S.length?`<tr><th>${t('symptom')}</th><th class="num">${t('cases')}</th></tr>`+Object.entries(bs).sort((a,b)=>b[1]-a[1]).map(([k,n])=>`<tr><td>${esc(k?L('sint',k):'—')}</td><td class="num">${n}</td></tr>`).join(''):`<tr><td class="note">${t('noData')}</td></tr>`;
   const bc={};S.forEach(c=>{const k=norm(c.cliente);if(!k)return;const o=bc[k]||(bc[k]={n:c.cliente,c:0,refs:{}});o.c++;if(c.referencia)o.refs[c.referencia]=(o.refs[c.referencia]||0)+1});
   const rep=Object.values(bc).filter(o=>o.c>1).sort((a,b)=>b.c-a.c);
-  $('#t-cli').innerHTML=rep.length?`<tr><th>${t('client')}</th><th class="n">${t('claims')}</th><th>${t('refs')}</th></tr>`+rep.map(o=>`<tr><td>${esc(o.n)}</td><td class="n">${o.c}</td><td>${Object.entries(o.refs).map(([r,n])=>esc(r)+(n>1?' ×'+n:'')).join(', ')}</td></tr>`).join(''):`<tr><td class="note">${t('noRepeat')}</td></tr>`;
-  const bm={};S.forEach(c=>{const k=String(c.fechaReclamo).slice(0,7)||'—';const o=bm[k]||(bm[k]={c:0,r:0});o.c++;o.r+=+c.rollos||0});const bmE=Object.entries(bm).sort((a,b)=>b[0].localeCompare(a[0]));const bmM=Math.max(1,...bmE.map(x=>x[1].c));
-  $('#t-mes').innerHTML=S.length?`<tr><th>${t('month')}</th><th class="n">${t('claims')}</th><th class="n">${t('rollsH')}</th><th style="width:45%"></th></tr>`+bmE.map(([k,o])=>`<tr><td style="text-transform:capitalize">${esc(monthLabel(k))}</td><td class="n">${o.c}</td><td class="n">${o.r}</td><td>${hbar(o.c,bmM)}</td></tr>`).join(''):`<tr><td class="note">${t('noData')}</td></tr>`;
+  $('#t-cli').innerHTML=rep.length?`<tr><th>${t('client')}</th><th class="num">${t('claims')}</th><th>${t('refs')}</th></tr>`+rep.map(o=>`<tr><td>${esc(o.n)}</td><td class="num">${o.c}</td><td>${Object.entries(o.refs).map(([r,n])=>esc(r)+(n>1?' ×'+n:'')).join(', ')}</td></tr>`).join(''):`<tr><td class="note">${t('noRepeat')}</td></tr>`;
+  const bm={};S.forEach(c=>{const k=String(c.fechaReclamo).slice(0,7)||'—';const o=bm[k]||(bm[k]={c:0,r:0});o.c++;o.r+=+c.rollos||0});
+  $('#t-mes').innerHTML=S.length?`<tr><th>${t('month')}</th><th class="num">${t('claims')}</th><th class="num">${t('rollsH')}</th></tr>`+Object.entries(bm).sort((a,b)=>b[0].localeCompare(a[0])).map(([k,o])=>`<tr><td>${esc(k)}</td><td class="num">${o.c}</td><td class="num">${o.r}</td></tr>`).join(''):`<tr><td class="note">${t('noData')}</td></tr>`;
   renderSent();
 }
 function caseRow(c,forSupplier){
-  const o={'ID':c.id,'Date':String(c.fechaReclamo).slice(0,10),'Client':c.cliente,'Référence / Reference':c.referencia,'Réf. client':c.referenciaTexto,'Commande / Order':c.pedido,'Lot / Batch':c.lote,
+  const o={'ID':c.id,'Service':t('svc_'+svcOf(c)),'Date':String(c.fechaReclamo).slice(0,10),'Client':c.cliente,'Référence / Reference':c.referencia,'Réf. client':c.referenciaTexto,'Commande / Order':c.pedido,'Lot / Batch':c.lote,
    'Rouleaux / Rolls':c.rollos,'Format (m)':c.formato,'Mètres / Metres':metros(c)||'','Type':L('tipo',tipoOf(c)),'Symptôme / Symptom':L('sint',c.sintoma),'Imputable':L('imp',impOf(c)),
    'Problème (FR)':c.resumeFr,'Problem (EN)':c.resumeEn,'Diagnostic technicien':c.diagnostico||'','Nb fichiers':(c.fotos||[]).length,'Statut':L('est',c.estado),'Résolution':L('res',c.resolucion),'Envoyé fournisseur':c.enviadoProveedor||'','Dossier Drive':c.carpetaUrl||''};
   if(forSupplier){['Client','Réf. client','Commande / Order','Statut','Résolution','Envoyé fournisseur','Dossier Drive'].forEach(k=>delete o[k])}
@@ -1343,43 +826,66 @@ function caseRow(c,forSupplier){
 function autoW(ws,rows){if(rows.length)ws['!cols']=Object.keys(rows[0]).map(k=>({wch:Math.min(50,Math.max(k.length,...rows.map(r=>String(r[k]??'').length))+2)}))}
 function xlsx(sheets,filename){const wb=XLSX.utils.book_new();sheets.forEach(([name,rows])=>{const ws=XLSX.utils.json_to_sheet(rows);autoW(ws,rows);XLSX.utils.book_append_sheet(wb,ws,name)});download(filename,XLSX.write(wb,{type:'array',bookType:'xlsx'}),'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')}
 $('#b-exp-all').onclick=()=>xlsx([['Litiges',filtered().map(c=>caseRow(c))]],`litiges_${today()}.xlsx`);
-$('#b-prov-xlsx').onclick=()=>{
-  const S=statSet();if(!S.length){toast(t('noCasesFilter'));return}
-  const by={};S.forEach(c=>{const k=c.referencia||'—';const o=by[k]||(by[k]={'Référence / Reference':k,'Dossiers / Cases':0,'Rouleaux / Rolls':0,'Mètres / Metres':0});o['Dossiers / Cases']++;o['Rouleaux / Rolls']+=+c.rollos||0;o['Mètres / Metres']+=metros(c);TIPOS.forEach(x=>{const col=LABELS.tipo[x][0]+' / '+LABELS.tipo[x][1];o[col]=(o[col]||0)+(tipoOf(c)===x?(+c.rollos||0):0)})});
-  const det=S.slice().sort((a,b)=>String(a.referencia).localeCompare(String(b.referencia))||String(a.fechaReclamo).localeCompare(String(b.fechaReclamo))).map(c=>caseRow(c,true));
-  xlsx([['Résumé - Summary',Object.values(by).sort((a,b)=>b['Rouleaux / Rolls']-a['Rouleaux / Rolls'])],['Détail - Detail',det]],`reclamations_fournisseur_${today()}.xlsx`);
-  lastExport=S.filter(c=>!c.enviadoProveedor).map(c=>c.id);renderSent();
+/* ---- Exports fournisseur : tout en anglais, dossiers nommés par la date du problème ---- */
+const EN_TIPO={transporte:'Transport damage',fabricacion:'Manufacturing defect',envejecimiento:'Ageing / performance',instalacion:'Installation / use',pendiente:'To be determined'};
+const EN_SINT=k=>k&&LABELS.sint[k]?LABELS.sint[k][1]:'';
+const pdate=c=>String(c.fechaReclamo||'').slice(0,10)||'no-date';
+function supplierRow(c){return {'Date of problem':pdate(c),'Reference':c.referencia||'','Batch / lot':c.lote||'','Rolls affected':c.rollos||'','Roll length (m)':c.formato||'','Metres affected':metros(c)||'',
+  'Claim type':EN_TIPO[tipoOf(c)]||'','Symptom':EN_SINT(c.sintoma),'Problem':c.resumeEn||c.resumeFr||'','Technician diagnosis':c.diagnosticoEn||c.diagnostico||'','Files':(c.fotos||[]).length}}
+async function ensureEnglish(S,btn,label){
+  const need=S.filter(c=>(c.diagnostico&&!c.diagnosticoEn)||(c.resumeFr&&!c.resumeEn)).map(c=>c.id);
+  if(!need.length)return S;
+  btn.textContent=t('translating');
+  try{const upd=await api('translateMissing',{ids:need});upd.forEach(nc=>{const i=CASOS.findIndex(x=>x.id===nc.id);if(i>=0)CASOS[i]=nc})}catch(_){}
+  btn.textContent=label;const ids=new Set(S.map(c=>c.id));return CASOS.filter(c=>ids.has(c.id));
+}
+$('#b-prov-xlsx').onclick=async()=>{
+  let S=statSet();if(!S.length){toast(t('noCasesFilter'));return}
+  const b=$('#b-prov-xlsx');b.disabled=true;
+  try{
+    S=await ensureEnglish(S,b,t('supXlsx'));
+    const by={};S.forEach(c=>{const k=c.referencia||'—';const o=by[k]||(by[k]={'Reference':k,'Claims':0,'Rolls affected':0,'Metres affected':0});o['Claims']++;o['Rolls affected']+=+c.rollos||0;o['Metres affected']+=metros(c);TIPOS.forEach(x=>{const col='Rolls - '+EN_TIPO[x];o[col]=(o[col]||0)+(tipoOf(c)===x?(+c.rollos||0):0)})});
+    const det=S.slice().sort((a,b)=>String(a.referencia).localeCompare(String(b.referencia))||pdate(a).localeCompare(pdate(b))).map(supplierRow);
+    const ds=S.map(pdate).filter(d=>d!=='no-date').sort();
+    xlsx([['Summary',Object.values(by).sort((a,b)=>b['Rolls affected']-a['Rolls affected'])],['Detail',det]],`Reflectiv_claims_${ds[0]||today()}_${ds[ds.length-1]||today()}.xlsx`);
+    lastExport=S.filter(c=>!c.enviadoProveedor).map(c=>c.id);renderSent();
+  }finally{b.disabled=false;b.textContent=t('supXlsx')}
 };
 $('#b-prov-zip').onclick=async()=>{
-  const S=statSet().filter(c=>(c.fotos||[]).length);if(!S.length){toast(t('noCasesFilter'));return}
-  const b=$('#b-prov-zip');b.disabled=true;const lbl=b.innerHTML;b.textContent=t('preparing');
+  let S=statSet().filter(c=>(c.fotos||[]).length);if(!S.length){toast(t('noCasesFilter'));return}
+  const b=$('#b-prov-zip');b.disabled=true;
   try{
-    const z=new JSZip();const root=z.folder(`Reclamations_fournisseur_${today()}`);
+    S=await ensureEnglish(S,b,t('supZip'));b.textContent=t('preparing');
+    const ds=S.map(pdate).filter(d=>d!=='no-date').sort();
+    const z=new JSZip();const root=z.folder(`Reflectiv_claims_${ds[0]||today()}_${ds[ds.length-1]||today()}`);
+    const used={};
     for(const c of S){
-      const f=root.folder(`${slug(c.referencia)}/${String(c.fechaReclamo).slice(0,10)}_${c.id}`);
-      f.file('fiche.txt',Object.entries(caseRow(c,true)).map(([k,v])=>`${k}: ${v??''}`).join('\r\n'));
-      let i=1;for(const fid of c.fotos){try{const m=await api('media',{id:c.id,fid,size:0});f.file(m.mime==='application/pdf'?`document_${i}.pdf`:`photo_${String(i).padStart(2,'0')}.jpg`,m.data,{base64:true});i++}catch(_){}}
+      let name=`${pdate(c)}_${slug(c.referencia)}`;used[name]=(used[name]||0)+1;if(used[name]>1)name+=`_${used[name]}`;
+      const f=root.folder(`${slug(c.referencia)}/${name}`);
+      f.file('claim_sheet.txt',Object.entries(supplierRow(c)).map(([k,v])=>`${k}: ${v??''}`).join('\r\n'));
+      let i=1;for(const fid of c.fotos){try{const m=await api('media',{id:c.id,fid,size:0});
+        const ext=m.mime==='application/pdf'?'pdf':/heic|heif/.test(m.mime)?'heic':/png/.test(m.mime)?'png':'jpg';
+        f.file(ext==='pdf'?`document_${i}.pdf`:`photo_${String(i).padStart(2,'0')}.${ext}`,m.data,{base64:true});i++}catch(_){}}
     }
-    download(`reclamations_fournisseur_photos_${today()}.zip`,await z.generateAsync({type:'blob'}));
-  }finally{b.disabled=false;b.innerHTML=lbl;applyI18n()}
+    download(`Reflectiv_claims_photos_${ds[0]||today()}_${ds[ds.length-1]||today()}.zip`,await z.generateAsync({type:'blob'}));
+  }finally{b.disabled=false;b.textContent=t('supZip')}
 };
 function renderSent(){
   const z=$('#sent-zone');if(!lastExport||!lastExport.length){z.innerHTML='';return}
-  z.innerHTML=`<div class="okmsg">✓ ${t('markQ',lastExport.length)} <button class="btn sm primary" id="b-mark">${t('markYes')}</button><button class="btn ghost sm" id="b-nomark">${t('no')}</button></div>`;
+  z.innerHTML=`<div class="okmsg">${t('markQ',lastExport.length)} <button class="btn sm" id="b-mark">${t('markYes')}</button><button class="btn ghost sm" id="b-nomark">${t('no')}</button></div>`;
   $('#b-mark').onclick=async()=>{try{await api('markSent',{ids:lastExport,date:today()});lastExport=null;toast(t('marked'));load(true)}catch(_){toast(t('errSave'))}};
   $('#b-nomark').onclick=()=>{lastExport=null;renderSent()};
 }
 
 /* ============ catalogue ============ */
-$('#b-cat').onclick=()=>{closeMenu();$('#cat-text').value=(CATALOGO.length?CATALOGO:DEFAULT_CATALOG).join('\n');$('#m-cat').hidden=false};
+$('#b-cat').onclick=()=>{$('#cat-text').value=(CATALOGO.length?CATALOGO:DEFAULT_CATALOG).join('\n');$('#m-cat').hidden=false};
 $('#b-save-cat').onclick=async()=>{const refs=[...new Set($('#cat-text').value.split(/\r?\n/).map(s=>s.trim().toUpperCase()).filter(Boolean))];
   try{await api('saveCatalog',{refs});CATALOGO=refs;$('#m-cat').hidden=true;toast(t('catSaved',refs.length))}catch(_){toast(t('errSave'))}};
 
-/* ============ démarrage ============ */
+/* ============ boot ============ */
 function setHH(){document.documentElement.style.setProperty('--hh',$('.top').offsetHeight+'px')}
 setHH();addEventListener('resize',setHH);
 applyI18n();
-showGuide(!lsGet('lit_guide_off'));
 if(!API_URL||!PIN)showLogin();else{$('#login').hidden=true;load()}
 setInterval(()=>{if(document.visibilityState==='visible'&&API_URL&&PIN&&$('#login').hidden)checkUpdates()},90000);
 </script>
