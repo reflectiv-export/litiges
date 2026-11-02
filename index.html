@@ -349,7 +349,7 @@ const I18N={
   newTitle:'Nouveau litige',close:'Fermer',cancel:'Annuler',save:'Enregistrer',pasteMail:'Mail du client (collez-le tel quel)',dropHint:'Glissez photos ou PDF ici, cliquez pour choisir, ou collez une capture (Ctrl+V)',
   fillAI:'Remplir avec l’IA',reading:'Lecture de la réclamation…',checkFields:'Vérifiez les champs puis enregistrez.',aiFail:'L’IA n’a pas répondu. Remplissez à la main ou réessayez.',
   needInput:'Collez le mail ou ajoutez des photos',missing:'À demander au client :',needClient:'Le client manque',saving:'Enregistrement…',savedCase:id=>'Litige enregistré : '+id,
-  contact:'Contact',email:'Email',claimDate:'Date du mail',probDate:'Date du problème',probNote:'Comment la date a été estimée',probPh:'ex. ≈ 2 mois avant le mail',probShort:'Problème',sortProbDesc:'Date du problème : récents d’abord',sortProbAsc:'Date du problème : anciens d’abord',supMissing:r=>`Ces références n’ont pas de code fournisseur : ${r}\n\nElles sortiront avec notre référence. Continuer ?\n(Pour ajouter le code : bouton Catalogue, ligne « SOL 102 = S79 »)`,asWritten:'Écrite par le client',orderInv:'Commande / facture',lot:'Lot (si connu)',rollsAff:'Rouleaux touchés',format:'Format (m)',lang:'Langue du client',
+  contact:'Contact',email:'Email',claimDate:'Date du mail',probDate:'Date du problème',photosN:'Photos',zipping:'Création du ZIP…',zipDone:n=>`ZIP téléchargé (${n} dossiers)`,zipDoneFail:(ok,ko)=>`ZIP téléchargé : ${ok} fichiers, ${ko} introuvables (supprimés de Drive ?)`,zipErr:'Le ZIP n’a pas pu être créé.',probNote:'Comment la date a été estimée',probPh:'ex. ≈ 2 mois avant le mail',probShort:'Problème',sortProbDesc:'Date du problème : récents d’abord',sortProbAsc:'Date du problème : anciens d’abord',supMissing:r=>`Ces références n’ont pas de code fournisseur : ${r}\n\nElles sortiront avec notre référence. Continuer ?\n(Pour ajouter le code : bouton Catalogue, ligne « SOL 102 = S79 »)`,asWritten:'Écrite par le client',orderInv:'Commande / facture',lot:'Lot (si connu)',rollsAff:'Rouleaux touchés',format:'Format (m)',lang:'Langue du client',
   typeProv:'Type (provisoire)',problem:'Le problème en une phrase',problemPh:'Ex. : 4 rouleaux marqués à l’intérieur, carton intact',resolution:'Résolution',
   photos:'Photos et fichiers',addFiles:'Ajouter des fichiers',nClaimsRef:(n,r)=>`${n} réclamations de ce client sur ${r} :`,techDiag:'Diagnostic technicien',noDiag:'Pas encore de diagnostic. Le dossier apparaît dans l’onglet Technicien tant qu’il est « À analyser ».',
   imputable:'Imputable',sugg:'Suggestion de réponse',caseData:'Données du dossier',saveChanges:'Enregistrer les modifications',changesSaved:'Modifications enregistrées',origMail:'Mail original du client',
@@ -383,7 +383,7 @@ const I18N={
   newTitle:'New claim',close:'Close',cancel:'Cancel',save:'Save',pasteMail:'Customer email (paste it as is)',dropHint:'Drop photos or PDFs here, click to choose, or paste a screenshot (Ctrl+V)',
   fillAI:'Fill in with AI',reading:'Reading the claim…',checkFields:'Check the fields, then save.',aiFail:'The AI did not answer. Fill in by hand or try again.',
   needInput:'Paste the email or add photos',missing:'Ask the customer for:',needClient:'Customer is missing',saving:'Saving…',savedCase:id=>'Claim saved: '+id,
-  contact:'Contact',email:'Email',claimDate:'Email date',probDate:'Date of problem',probNote:'How the date was estimated',probPh:'e.g. ≈ 2 months before the email',probShort:'Problem',sortProbDesc:'Problem date: newest first',sortProbAsc:'Problem date: oldest first',supMissing:r=>`These references have no supplier code: ${r}\n\nThey will be exported with our reference. Continue?\n(To add a code: Catalogue button, line “SOL 102 = S79”)`,asWritten:'As written by customer',orderInv:'Order / invoice',lot:'Batch (if known)',rollsAff:'Rolls affected',format:'Format (m)',lang:'Customer language',
+  contact:'Contact',email:'Email',claimDate:'Email date',probDate:'Date of problem',photosN:'Photos',zipping:'Creating ZIP…',zipDone:n=>`ZIP downloaded (${n} cases)`,zipDoneFail:(ok,ko)=>`ZIP downloaded: ${ok} files, ${ko} missing (deleted from Drive?)`,zipErr:'The ZIP could not be created.',probNote:'How the date was estimated',probPh:'e.g. ≈ 2 months before the email',probShort:'Problem',sortProbDesc:'Problem date: newest first',sortProbAsc:'Problem date: oldest first',supMissing:r=>`These references have no supplier code: ${r}\n\nThey will be exported with our reference. Continue?\n(To add a code: Catalogue button, line “SOL 102 = S79”)`,asWritten:'As written by customer',orderInv:'Order / invoice',lot:'Batch (if known)',rollsAff:'Rolls affected',format:'Format (m)',lang:'Customer language',
   typeProv:'Type (provisional)',problem:'The problem in one sentence',problemPh:'E.g.: 4 rolls marked inside, box intact',resolution:'Resolution',
   photos:'Photos and files',addFiles:'Add files',nClaimsRef:(n,r)=>`${n} claims from this customer on ${r}:`,techDiag:'Technician diagnosis',noDiag:'No diagnosis yet. The case shows in the Technician tab while it is “To analyse”.',
   imputable:'Attributable to',sugg:'Suggested reply',caseData:'Case data',saveChanges:'Save changes',changesSaved:'Changes saved',origMail:'Original customer email',
@@ -852,7 +852,7 @@ async function ensureEnglish(S,btn,label){
   const need=S.filter(c=>(c.diagnostico&&!c.diagnosticoEn)||(c.resumeFr&&!c.resumeEn)).map(c=>c.id);
   if(!need.length)return S;
   btn.textContent=t('translating');
-  try{const upd=await api('translateMissing',{ids:need});upd.forEach(nc=>{const i=CASOS.findIndex(x=>x.id===nc.id);if(i>=0)CASOS[i]=nc})}catch(_){}
+  try{const upd=await api('translateMissing',{ids:need});(upd||[]).forEach(nc=>{const i=CASOS.findIndex(x=>x.id===nc.id);if(i>=0)CASOS[i]=nc})}catch(_){/* on exporte quand même, avec le texte d'origine */}
   btn.textContent=label;const ids=new Set(S.map(c=>c.id));return CASOS.filter(c=>ids.has(c.id));
 }
 $('#b-prov-xlsx').onclick=async()=>{
@@ -873,20 +873,32 @@ $('#b-prov-zip').onclick=async()=>{
   if(!checkSup(S))return;
   const b=$('#b-prov-zip');b.disabled=true;
   try{
-    S=await ensureEnglish(S,b,t('supZip'));b.textContent=t('preparing');
+    S=await ensureEnglish(S,b,t('supZip'));
     const ds=S.map(pdate).filter(d=>d!=='no-date').sort();
     const z=new JSZip();const root=z.folder(`Reflectiv_claims_${ds[0]||today()}_${ds[ds.length-1]||today()}`);
-    const used={};
+    const used={},jobs=[];
     for(const c of S){
       let name=`${pdate(c)}_${slug(sref(c))}`;used[name]=(used[name]||0)+1;if(used[name]>1)name+=`_${used[name]}`;
       const f=root.folder(`${slug(sref(c))}/${name}`);
       f.file('claim_sheet.txt',Object.entries(supplierRow(c)).map(([k,v])=>`${k}: ${v??''}`).join('\r\n'));
-      let i=1;for(const fid of c.fotos){try{const m=await api('media',{id:c.id,fid,size:0});
-        const ext=m.mime==='application/pdf'?'pdf':/heic|heif/.test(m.mime)?'heic':/png/.test(m.mime)?'png':'jpg';
-        f.file(ext==='pdf'?`document_${i}.pdf`:`photo_${String(i).padStart(2,'0')}.${ext}`,m.data,{base64:true});i++}catch(_){}}
+      c.fotos.forEach((fid,i)=>jobs.push({c,f,fid,i:i+1}));
     }
-    download(`Reflectiv_claims_photos_${ds[0]||today()}_${ds[ds.length-1]||today()}.zip`,await z.generateAsync({type:'blob'}));
-  }finally{b.disabled=false;b.textContent=t('supZip')}
+    // téléchargement des photos en parallèle (4 à la fois) avec compteur
+    let done=0,fail=0;const total=jobs.length;
+    const tick=()=>{b.textContent=`${t('photosN')} ${done}/${total}…`};tick();
+    const worker=async()=>{while(jobs.length){const j=jobs.shift();
+      try{const m=await api('media',{id:j.c.id,fid:j.fid,size:0});
+        if(m&&m.data){const ext=m.mime==='application/pdf'?'pdf':/heic|heif/.test(m.mime)?'heic':/png/.test(m.mime)?'png':'jpg';
+          j.f.file(ext==='pdf'?`document_${j.i}.pdf`:`photo_${String(j.i).padStart(2,'0')}.${ext}`,m.data,{base64:true})}else fail++;
+      }catch(_){fail++}
+      done++;tick()}};
+    await Promise.all([worker(),worker(),worker(),worker()]);
+    b.textContent=t('zipping');
+    const blob=await z.generateAsync({type:'blob'});
+    download(`Reflectiv_claims_photos_${ds[0]||today()}_${ds[ds.length-1]||today()}.zip`,blob);
+    toast(fail?t('zipDoneFail',total-fail,fail):t('zipDone',S.length));
+  }catch(e){alert(t('zipErr')+'\n\n'+(e&&e.message||e))}
+  finally{b.disabled=false;b.textContent=t('supZip')}
 };
 function renderSent(){
   const z=$('#sent-zone');if(!lastExport||!lastExport.length){z.innerHTML='';return}
